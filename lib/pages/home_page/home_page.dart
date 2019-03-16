@@ -6,6 +6,7 @@ import 'package:flutter_movie_db/data/model/movie.dart';
 import 'package:flutter_movie_db/data/service/ServiceProvider.dart';
 import 'package:flutter_movie_db/data/service/base_service.dart';
 import 'package:flutter_movie_db/data/service/tmdb_service.dart';
+import 'package:flutter_movie_db/pages/details_page/details_page.dart';
 import 'package:flutter_movie_db/ui/image_item.dart';
 import 'dart:async';
 import 'package:transparent_image/transparent_image.dart';
@@ -47,7 +48,6 @@ class _HomePageState extends State<HomePage> {
   void getMovies(BaseService service) async {
     print("getMovies");
     List<Movie> movies = await service.getTopRatedMovies();
-
     print("movies loaded: ${movies.toString()}");
     if (movies != null) {
       setState(() {
@@ -71,6 +71,9 @@ class _HomePageState extends State<HomePage> {
           movie: items[index],
           callback: () {
             print("Clicked ${items[index].title}");
+            Navigator.push(context, MaterialPageRoute(builder: (context){
+              return DetailsPage(movie: items[index]);
+            }));
           },
         );
       }),

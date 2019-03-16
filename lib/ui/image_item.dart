@@ -26,11 +26,11 @@ class ImageItem extends StatelessWidget {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(5), topRight: Radius.circular(5)),
                   child: Hero(
-                      tag: "list_image",
+                      tag: movie.title,
                       child: FadeInImage.memoryNetwork(
                         placeholder: kTransparentImage,
                         image:
-                        "${MvdbService.IMAGES_BASE_URL}/${movie.poster_path}",
+                        "${TmdbService.IMAGES_BASE_URL}/${movie.poster_path}",
                         fit: BoxFit.fill,
                       )),
                 ),

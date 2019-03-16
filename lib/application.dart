@@ -14,7 +14,7 @@ class MvdbApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ServiceProvider(
-      service: MvdbService(),
+      service: TmdbService(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primaryColor: Colors.white),
