@@ -1,3 +1,4 @@
+import 'package:flutter_movie_db/data/model/movie_details.dart';
 import 'package:flutter_movie_db/network/response/api_response.dart';
 import 'package:flutter_movie_db/network/response/api_response_serializer.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
@@ -16,6 +17,7 @@ class MovieApi extends ApiClient with _$MovieApiClient {
   MovieApi({this.base, this.apiKey}){
     final repo = JsonRepo()..add(ApiResponseJsonSerializer());
     repo..add(MovieJsonSerializer());
+    repo..add(MovieDetailsJsonSerializer());
 
     globalClient = Client();
     this.jsonConverter = repo;
@@ -28,4 +30,11 @@ class MovieApi extends ApiClient with _$MovieApiClient {
 
   @GetReq(path: "/top_rated")
   Future<ApiResponse> getTopRatedMovies();
+
+  @GetReq(path: ":id")
+  Future<MovieDetails> getMovieDetails(@PathParam() String id);
+
+  @GetReq(path: "/now_playing")
+  Future<ApiResponse> getNowPlayingMovies();
+
 }

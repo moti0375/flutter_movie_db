@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_db/data/model/movie.dart';
+import 'package:flutter_movie_db/data/model/movie_details.dart';
 
 
 abstract class BaseService{
   Future<List<Movie>> getTopRatedMovies();
-  Future<Movie> getMovieById(String id);
+  Future<MovieDetails> getMovieDetails(String id);
+  Future<List<Movie>> getNowPlaying();
 }
 
 
 class MockService implements BaseService{
   @override
-  Future<Movie> getMovieById(String id) {
+  Future<MovieDetails> getMovieDetails(String id) {
     return null;
   }
 
@@ -36,6 +38,11 @@ class MockService implements BaseService{
     List<Movie> movies = [movie1, movie2, movie3];
     Future<List<Movie>> result = new Future.delayed(Duration(milliseconds: 500), () => movies);
     return result;
+  }
+
+  @override
+  Future<List<Movie>> getNowPlaying() {
+    return null;
   }
 
 }

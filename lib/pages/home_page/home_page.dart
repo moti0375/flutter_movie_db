@@ -20,11 +20,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Movie> movies = List<Movie>();
+  BaseService service;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    BaseService service = ServiceProvider.of(context).service;
+    service = ServiceProvider.of(context).service;
     getMovies(service);
   }
 
@@ -47,7 +48,7 @@ class _HomePageState extends State<HomePage> {
 
   void getMovies(BaseService service) async {
     print("getMovies");
-    List<Movie> movies = await service.getTopRatedMovies();
+    List<Movie> movies = await service.getNowPlaying();
     print("movies loaded: ${movies.toString()}");
     if (movies != null) {
       setState(() {
@@ -71,12 +72,21 @@ class _HomePageState extends State<HomePage> {
           movie: items[index],
           callback: () {
             print("Clicked ${items[index].title}");
-            Navigator.push(context, MaterialPageRoute(builder: (context){
-              return DetailsPage(movie: items[index]);
-            }));
-          },
+            _loadMovieDetailsAndNavigate("${items[index].id}");
+           },
         );
       }),
     );
+  }
+
+  void _loadMovieDetailsAndNavigate(String id){
+    print("_loadMovieDetailsAndNavigate: $id");
+    service.getMovieDetails(id).then((details){
+      print("Movie details: ${details.toString()}");
+      Navigator.push(context, MaterialPageRoute(builder: (context){
+        return DetailsPage(movie: details);
+      }));
+
+    });
   }
 }

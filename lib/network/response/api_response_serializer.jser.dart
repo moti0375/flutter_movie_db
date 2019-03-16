@@ -77,3 +77,52 @@ abstract class _$MovieJsonSerializer implements Serializer<Movie> {
     return obj;
   }
 }
+
+abstract class _$MovieDetailsJsonSerializer
+    implements Serializer<MovieDetails> {
+  @override
+  Map<String, dynamic> toMap(MovieDetails model) {
+    if (model == null) return null;
+    Map<String, dynamic> ret = <String, dynamic>{};
+    setMapValue(ret, 'adult', model.adult);
+    setMapValue(ret, 'backdrop_path', model.backdrop_path);
+    setMapValue(ret, 'budget', model.budget);
+    setMapValue(ret, 'homepage', model.homepage);
+    setMapValue(ret, 'id', model.id);
+    setMapValue(ret, 'original_title', model.original_title);
+    setMapValue(ret, 'overview', model.overview);
+    setMapValue(ret, 'poster_path', model.poster_path);
+    setMapValue(ret, 'release_date', model.release_date);
+    setMapValue(ret, 'revenue', model.revenue);
+    setMapValue(ret, 'runtime', model.runtime);
+    setMapValue(ret, 'status', model.status);
+    setMapValue(ret, 'title', model.title);
+    setMapValue(ret, 'tagline', model.tagline);
+    setMapValue(ret, 'vote_average', model.vote_average);
+    setMapValue(ret, 'vote_count', model.vote_count);
+    return ret;
+  }
+
+  @override
+  MovieDetails fromMap(Map map) {
+    if (map == null) return null;
+    final obj = new MovieDetails();
+    obj.adult = map['adult'] as bool;
+    obj.backdrop_path = map['backdrop_path'] as String;
+    obj.budget = map['budget'] as int;
+    obj.homepage = map['homepage'] as String;
+    obj.id = map['id'] as int;
+    obj.original_title = map['original_title'] as String;
+    obj.overview = map['overview'] as String;
+    obj.poster_path = map['poster_path'] as String;
+    obj.release_date = map['release_date'] as String;
+    obj.revenue = map['revenue'] as int;
+    obj.runtime = map['runtime'] as int;
+    obj.status = map['status'] as String;
+    obj.title = map['title'] as String;
+    obj.tagline = map['tagline'] as String;
+    obj.vote_average = map['vote_average'] as double;
+    obj.vote_count = map['vote_count'] as int;
+    return obj;
+  }
+}

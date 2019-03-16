@@ -32,11 +32,11 @@ class RatingWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            _getIconFromRating(rating / 1),
-            _getIconFromRating(rating / 2),
-            _getIconFromRating(rating / 3),
-            _getIconFromRating(rating / 4),
-            _getIconFromRating(rating / 5)
+            _getIconFromRating(rating - 0),
+            _getIconFromRating(rating - 1),
+            _getIconFromRating(rating - 2),
+            _getIconFromRating(rating - 3),
+            _getIconFromRating(rating - 4)
           ],
         ),
         Container(
@@ -52,13 +52,13 @@ class RatingWidget extends StatelessWidget {
 
   Icon _getIconFromRating(double rating) {
     print("_getIconFromRating: $rating");
-    if (rating > 1) {
+    if (rating >= 1) {
       return Icon(
         Icons.star,
         color: Colors.red,
       );
     }
-    if (rating > 0.0 && rating > 0.5) {
+    if (rating > 0.0 && rating < 1) {
       return Icon(
         Icons.star_half,
         color: Colors.red,

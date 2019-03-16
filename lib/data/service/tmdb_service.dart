@@ -1,5 +1,6 @@
 
 import 'package:flutter_movie_db/data/model/movie.dart';
+import 'package:flutter_movie_db/data/model/movie_details.dart';
 import 'package:flutter_movie_db/data/service/base_service.dart';
 import 'package:flutter_movie_db/network/base_http_client.dart';
 import 'package:flutter_movie_db/network/response/api_response.dart';
@@ -18,21 +19,29 @@ class TmdbService implements BaseService{
   final MovieApi client = MovieApi(base: route(BASE_URI), apiKey: API_KEY)..jsonConverter;
 
   @override
-  Future<Movie> getMovieById(String id) async {
-    return null;
+  Future<MovieDetails> getMovieDetails(String id) async {
+    print("tmdb service: getMovieDetails: $id");
+    return client.getMovieDetails(id);
   }
 
   @override
   Future<List<Movie>> getTopRatedMovies() async {
-    print("MvdbService: getMovies");
+   // print("MvdbService: getMovies");
 
     ApiResponse response = await client.getTopRatedMovies();
-    print("response: ${response.toString()}" );
+   // print("response: ${response.toString()}" );
     return response.results;
   }
 
 
   static String buildImageUrl(String imageName){
     return "$IMAGES_BASE_URL/$imageName";
+  }
+
+  @override
+  Future<List<Movie>> getNowPlaying() async {
+    ApiResponse response = await client.getNowPlayingMovies();
+    return response.results;
+
   }
 }
