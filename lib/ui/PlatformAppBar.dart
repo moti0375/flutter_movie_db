@@ -19,6 +19,7 @@ class PlatformAppBar extends PlatformWidget<CupertinoNavigationBar, AppBar> {
   @override
   AppBar buildMaterialWidget(BuildContext context) {
     return AppBar(
+      backgroundColor: Theme.of(context).primaryColorLight,
       title: title,
     );
   }

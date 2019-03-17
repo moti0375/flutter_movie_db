@@ -65,8 +65,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildGridLayout(List<Movie> items) {
+
+    var size = MediaQuery.of(context).size;
+
+    final double itemHeight = (size.height);
+    final double itemWidth = size.width ;
+
+
     return GridView.count(
       crossAxisCount: 2,
+      childAspectRatio: (itemWidth / itemHeight),
+      controller: new ScrollController(keepScrollOffset: true),
       children: List.generate(items.length, (index) {
         return ImageItem(
           movie: items[index],
