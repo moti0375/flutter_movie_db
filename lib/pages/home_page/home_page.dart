@@ -62,7 +62,6 @@ class _HomePageState extends State<HomePage> {
         });
       }
     });
-
   }
 
   PreferredSizeWidget _buildAppBar() {
@@ -108,17 +107,22 @@ class _HomePageState extends State<HomePage> {
           movie: items[index],
           callback: () {
             print("Clicked ${items[index].title}");
-            _loadMovieDetailsAndNavigate("${items[index].id}");
+            _loadMovieDetailsAndNavigate(items[index]);
           },
         );
       }),
     );
   }
 
-  void _loadMovieDetailsAndNavigate(String id) {
-    print("_loadMovieDetailsAndNavigate: $id");
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return DetailsPage(movieStream: service.getMovieDetails(id));
-    }));
+  void _loadMovieDetailsAndNavigate(Movie movie) {
+    print("_loadMovieDetailsAndNavigate: ${movie.id}");
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) {
+        return DetailsPage(
+          movieStream: service.getMovieDetails("${movie.id}"),
+          movie: movie,
+        );
+      },
+    ));
   }
 }

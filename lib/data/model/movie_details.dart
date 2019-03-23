@@ -26,4 +26,10 @@ class MovieDetails{
   factory MovieDetails.fromJson(Map<String, dynamic> json) => _$MovieDetailsFromJson(json);
   Map<String, dynamic> toJson() => _$MovieDetailsToJson(this);
 
+  @override
+  String toString() {
+    return 'MovieDetails{id: $id, poster_path: $poster_path, title: $title}';
+  }
+
+
 }
