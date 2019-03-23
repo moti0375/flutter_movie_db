@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_db/data/model/movie.dart';
 import 'package:flutter_movie_db/data/model/movie_details.dart';
@@ -5,11 +7,12 @@ import 'package:flutter_movie_db/ui/PlatformAppBar.dart';
 import 'package:flutter_movie_db/data/service/tmdb_service.dart';
 import 'package:flutter_movie_db/ui/rating_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class DetailsPage extends StatefulWidget {
-  DetailsPage({this.movie});
+  DetailsPage({@required this.movieStream});
 
-  final MovieDetails movie;
+  final Stream<MovieDetails> movieStream;
 
   @override
   State<StatefulWidget> createState() {
@@ -19,13 +22,30 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageStateState extends State<DetailsPage> {
   final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+  MovieDetails movieDetails;
+  StreamSubscription _subscription;
 
+  @override
+  void initState() {
+    super.initState();
+    _subscription = widget.movieStream.listen((details){
+      setState(() {
+        this.movieDetails = details;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _subscription.cancel();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[400],
       appBar: PlatformAppBar(
-        title: Text(widget.movie.title),
+        title: Text(movieDetails != null ? movieDetails.title : ""),
       ).build(context),
       body: Container(
         padding: EdgeInsets.all(8),
@@ -37,13 +57,10 @@ class _DetailsPageStateState extends State<DetailsPage> {
               padding: EdgeInsets.symmetric(horizontal: 8),
               height: 250,
               child: Hero(
-                tag: widget.movie.title,
+                tag: movieDetails != null ? movieDetails.title : "",
                 child: Container(
                   height: 300,
-                  child: Image.network(
-                    TmdbService.buildImageUrl(widget.movie.poster_path),
-                    fit: BoxFit.fill,
-                  ),
+                  child: getImageOrPlaceHolder(),
                 ),
               ),
             ),
@@ -53,7 +70,7 @@ class _DetailsPageStateState extends State<DetailsPage> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
-                widget.movie.title,
+                movieDetails != null ? movieDetails.title : "",
                 textAlign: TextAlign.center,
                 softWrap: true,
                 style: TextStyle(
@@ -72,7 +89,7 @@ class _DetailsPageStateState extends State<DetailsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   Text(
-                    "${dateFormat.parse(widget.movie.release_date).year}",
+                    movieDetails != null ? "${dateFormat.parse(movieDetails.release_date).year}" : "",
                     textAlign: TextAlign.center,
                     softWrap: true,
                     style: TextStyle(
@@ -82,7 +99,7 @@ class _DetailsPageStateState extends State<DetailsPage> {
                     ),
                   ),
                   Text(
-                    "${widget.movie.runtime}Min",
+                    movieDetails != null ? "${movieDetails.runtime}Min" : "",
                     textAlign: TextAlign.center,
                     softWrap: true,
                     style: TextStyle(
@@ -100,7 +117,7 @@ class _DetailsPageStateState extends State<DetailsPage> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
-                widget.movie.overview,
+                movieDetails != null ? movieDetails.overview : "",
                 textAlign: TextAlign.left,
                 softWrap: true,
                 style: TextStyle(
@@ -111,13 +128,29 @@ class _DetailsPageStateState extends State<DetailsPage> {
               height: 16,
             ),
             RatingWidget(
-              rating: widget.movie.vote_average * 0.5,
-              totalVoting: widget.movie.vote_count,
+              rating: movieDetails != null ? movieDetails.vote_average * 0.5 : 0,
+              totalVoting: movieDetails != null ? movieDetails.vote_count : 0,
             )
           ],
         ),
       ),
     );
   }
-}
 
+  Widget getImageOrPlaceHolder(){
+    if(movieDetails != null){
+      return FadeInImage.memoryNetwork(
+        placeholder: kTransparentImage,
+        image:TmdbService.buildImageUrl(movieDetails.poster_path),
+        fit: BoxFit.fill,
+      );
+    } else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          CircularProgressIndicator(),
+        ],
+      );
+    }
+  }
+}

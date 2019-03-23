@@ -21,12 +21,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Movie> movies = List<Movie>();
   BaseService service;
+  StreamSubscription _subscription;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     service = ServiceProvider.of(context).service;
-    getMovies(service);
   }
 
   @override
@@ -40,22 +40,29 @@ class _HomePageState extends State<HomePage> {
         appBar: _buildAppBar(),
         body: Container(
           padding: EdgeInsets.all(8),
-          child: _buildGridLayout(movies),
+          child: _buildContent(),
         ),
       ),
     );
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _subscription.cancel();
+  }
+
   void getMovies(BaseService service) async {
     print("getMovies");
-    List<Movie> movies = await service.getNowPlaying();
-    print("movies loaded: ${movies.toString()}");
-    if (movies != null) {
-      setState(() {
-        this.movies.clear();
-        this.movies.addAll(movies);
-      });
-    }
+    _subscription = service.getNowPlaying().listen((data) {
+      if (data != null) {
+        setState(() {
+          this.movies.clear();
+          this.movies.addAll(data);
+        });
+      }
+    });
+
   }
 
   PreferredSizeWidget _buildAppBar() {
@@ -64,13 +71,33 @@ class _HomePageState extends State<HomePage> {
     return appBar;
   }
 
-  Widget _buildGridLayout(List<Movie> items) {
+  Widget _buildContent() {
+    return StreamBuilder<List<Movie>>(
+      stream: service.getNowPlaying(),
+      builder: (context, snapshot) {
+        return _buildGridLayout(snapshot.data);
+      },
+    );
+  }
 
+  Widget _buildGridLayout(List<Movie> items) {
+    if (items == null) {
+      return Container(
+        color: Colors.blueGrey,
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(),
+            ],
+          ),
+        ),
+      );
+    }
     var size = MediaQuery.of(context).size;
 
     final double itemHeight = (size.height);
-    final double itemWidth = size.width ;
-
+    final double itemWidth = size.width;
 
     return GridView.count(
       crossAxisCount: 2,
@@ -82,20 +109,16 @@ class _HomePageState extends State<HomePage> {
           callback: () {
             print("Clicked ${items[index].title}");
             _loadMovieDetailsAndNavigate("${items[index].id}");
-           },
+          },
         );
       }),
     );
   }
 
-  void _loadMovieDetailsAndNavigate(String id){
+  void _loadMovieDetailsAndNavigate(String id) {
     print("_loadMovieDetailsAndNavigate: $id");
-    service.getMovieDetails(id).then((details){
-      print("Movie details: ${details.toString()}");
-      Navigator.push(context, MaterialPageRoute(builder: (context){
-        return DetailsPage(movie: details);
-      }));
-
-    });
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return DetailsPage(movieStream: service.getMovieDetails(id));
+    }));
   }
 }

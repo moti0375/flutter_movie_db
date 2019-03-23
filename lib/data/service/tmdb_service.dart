@@ -19,9 +19,10 @@ class TmdbService implements BaseService{
   final MovieApi client = MovieApi(base: route(BASE_URI), apiKey: API_KEY)..jsonConverter;
 
   @override
-  Future<MovieDetails> getMovieDetails(String id) async {
+  Stream<MovieDetails> getMovieDetails(String id) async* {
     print("tmdb service: getMovieDetails: $id");
-    return client.getMovieDetails(id);
+    MovieDetails details = await client.getMovieDetails(id);
+    yield details;
   }
 
   @override
@@ -39,9 +40,11 @@ class TmdbService implements BaseService{
   }
 
   @override
-  Future<List<Movie>> getNowPlaying() async {
-    ApiResponse response = await client.getNowPlayingMovies();
-    return response.results;
-
+  Stream<List<Movie>> getNowPlaying() async* {
+    ApiResponse eventStream = await client.getNowPlayingMovies();
+    yield eventStream.results;
   }
+
+
+
 }

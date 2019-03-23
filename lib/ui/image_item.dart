@@ -60,8 +60,11 @@ class ImageItem extends StatelessWidget {
                     topLeft: Radius.circular(5), topRight: Radius.circular(5)),
                 child: Hero(
                   tag: movie.title,
-                  child: FadeInImage.memoryNetwork(placeholder: kTransparentImage,
-                    image: TmdbService.buildImageUrl(movie.poster_path), fit: BoxFit.fill,),
+                  child: FadeInImage.memoryNetwork(
+                    placeholder: kTransparentImage,
+                    image: TmdbService.buildImageUrl(movie.poster_path),
+                    fit: BoxFit.fill,
+                  ),
                 ),
               ),
             ),

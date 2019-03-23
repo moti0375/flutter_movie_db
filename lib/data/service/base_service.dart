@@ -5,14 +5,14 @@ import 'package:flutter_movie_db/data/model/movie_details.dart';
 
 abstract class BaseService{
   Future<List<Movie>> getTopRatedMovies();
-  Future<MovieDetails> getMovieDetails(String id);
-  Future<List<Movie>> getNowPlaying();
+  Stream<MovieDetails> getMovieDetails(String id);
+  Stream<List<Movie>> getNowPlaying();
 }
 
 
 class MockService implements BaseService{
   @override
-  Future<MovieDetails> getMovieDetails(String id) {
+  Stream<MovieDetails> getMovieDetails(String id) {
     return null;
   }
 
@@ -41,7 +41,7 @@ class MockService implements BaseService{
   }
 
   @override
-  Future<List<Movie>> getNowPlaying() {
+  Stream<List<Movie>> getNowPlaying() {
     return null;
   }
 
