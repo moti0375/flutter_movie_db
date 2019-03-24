@@ -12,22 +12,20 @@ import 'dart:async';
 import 'package:transparent_image/transparent_image.dart';
 
 import 'package:flutter_movie_db/ui/PlatformAppBar.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
+class MoviesModel extends Model{
+  MoviesModel({Stream<List<Movie>> stream}){
+    stream.listen((data){
+      this.movies = data;
+      notifyListeners();
+    });
+  }
+
+  List<Movie> movies;
 }
 
-class _HomePageState extends State<HomePage> {
-  List<Movie> movies = List<Movie>();
-  BaseService service;
-  StreamSubscription _subscription;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    service = ServiceProvider.of(context).service;
-  }
+class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +35,7 @@ class _HomePageState extends State<HomePage> {
       top: false,
       child: Scaffold(
         backgroundColor: Colors.black,
-        appBar: _buildAppBar(),
+        appBar: _buildAppBar(context),
         body: Container(
           padding: EdgeInsets.all(8),
           child: _buildContent(),
@@ -46,40 +44,21 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _subscription.cancel();
-  }
-
-  void getMovies(BaseService service) async {
-    print("getMovies");
-    _subscription = service.getNowPlaying().listen((data) {
-      if (data != null) {
-        setState(() {
-          this.movies.clear();
-          this.movies.addAll(data);
-        });
-      }
-    });
-  }
-
-  PreferredSizeWidget _buildAppBar() {
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
     PreferredSizeWidget appBar =
-        PlatformAppBar(title: Text("Flutter Movie DB")).build(context);
+    PlatformAppBar(title: Text("Flutter Movie DB")).build(context);
     return appBar;
   }
 
   Widget _buildContent() {
-    return StreamBuilder<List<Movie>>(
-      stream: service.getNowPlaying(),
-      builder: (context, snapshot) {
-        return _buildGridLayout(snapshot.data);
+    return ScopedModelDescendant<MoviesModel>(
+      builder: (context, child, model){
+        return _buildGridLayout(model.movies, context);
       },
     );
   }
 
-  Widget _buildGridLayout(List<Movie> items) {
+  Widget _buildGridLayout(List<Movie> items, BuildContext context) {
     if (items == null) {
       return Container(
         color: Colors.blueGrey,
@@ -107,17 +86,20 @@ class _HomePageState extends State<HomePage> {
           movie: items[index],
           callback: () {
             print("Clicked ${items[index].title}");
-            _loadMovieDetailsAndNavigate(items[index]);
+            _loadMovieDetailsAndNavigate(items[index], context);
           },
         );
       }),
     );
   }
 
-  void _loadMovieDetailsAndNavigate(Movie movie) {
+  void _loadMovieDetailsAndNavigate(Movie movie, BuildContext context) {
     print("_loadMovieDetailsAndNavigate: ${movie.id}");
     Navigator.push(context, MaterialPageRoute(
       builder: (context) {
+
+        BaseService service = ServiceProvider.of(context).service;
+
         return DetailsPage(
           movieStream: service.getMovieDetails("${movie.id}"),
           movie: movie,
@@ -126,3 +108,4 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 }
+

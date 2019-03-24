@@ -55,25 +55,19 @@ class _DetailsPageStateState extends State<DetailsPage> {
   Widget _createStream() {
     return StreamBuilder<MovieDetails>(
       stream: widget.movieStream,
-      builder: (context, snapshot) => _buildContent(snapshot.data)
+      builder: (context, snapshot) {
+        switch(snapshot.connectionState){
+          case ConnectionState.waiting:
+          case ConnectionState.none:
+          return _buildProgressBar();
+          default:
+            return _buildContent(snapshot.data);
+        }
+      }
     );
   }
 
   Widget _buildContent(MovieDetails movieDetails) {
-    if (movieDetails == null) {
-      print("Snapshot is null");
-      return Container(
-        color: Colors.blueGrey,
-        child: Center(
-          child: Row(
-            children: <Widget>[
-              CircularProgressIndicator(),
-            ],
-          ),
-        ),
-      );
-    }
-
     return new Container(
       padding: EdgeInsets.all(8),
       child: Column(
@@ -162,6 +156,19 @@ class _DetailsPageStateState extends State<DetailsPage> {
             totalVoting: movieDetails.vote_count,
           )
         ],
+      ),
+    );
+  }
+
+  Widget _buildProgressBar() {
+    return Container(
+      color: Colors.blueGrey,
+      child: Center(
+        child: Row(
+          children: <Widget>[
+            CircularProgressIndicator(),
+          ],
+        ),
       ),
     );
   }
