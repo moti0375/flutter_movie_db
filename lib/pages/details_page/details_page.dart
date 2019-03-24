@@ -7,33 +7,28 @@ import 'package:flutter_movie_db/ui/PlatformAppBar.dart';
 import 'package:flutter_movie_db/data/service/tmdb_service.dart';
 import 'package:flutter_movie_db/ui/rating_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:scoped_model/scoped_model.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class DetailsPage extends StatefulWidget {
-  DetailsPage({@required this.movieStream, @required this.movie});
 
-  final Stream<MovieDetails> movieStream;
-  final Movie movie;
+class MovieDetailsModel extends Model{
 
-  @override
-  State<StatefulWidget> createState() {
-    return _DetailsPageStateState();
+  MovieDetailsModel({Stream<MovieDetails> stream}){
+    stream.listen((data){
+      this.details = data;
+      notifyListeners();
+    });
   }
+
+  MovieDetails details;
 }
 
-class _DetailsPageStateState extends State<DetailsPage> {
+
+class DetailsPage extends StatelessWidget {
+  DetailsPage({@required this.movie});
   final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[400],
-      appBar: PlatformAppBar(
-        title: Text(widget.movie.title),
-      ).build(context),
-      body: _createStream(),
-    );
-  }
+  final Movie movie;
 
   Widget getImageOrPlaceHolder(MovieDetails movieDetails) {
     if (movieDetails != null) {
@@ -52,22 +47,31 @@ class _DetailsPageStateState extends State<DetailsPage> {
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[400],
+      appBar: PlatformAppBar(
+        title: Text(movie.title),
+      ).build(context),
+      body: _createStream(),
+    );
+  }
+
   Widget _createStream() {
-    return StreamBuilder<MovieDetails>(
-      stream: widget.movieStream,
-      builder: (context, snapshot) {
-        switch(snapshot.connectionState){
-          case ConnectionState.waiting:
-          case ConnectionState.none:
-          return _buildProgressBar();
-          default:
-            return _buildContent(snapshot.data);
-        }
-      }
+    return ScopedModelDescendant<MovieDetailsModel>(
+      builder: (context, child, model){
+        return _buildContent(model.details);
+      },
     );
   }
 
   Widget _buildContent(MovieDetails movieDetails) {
+
+    if(movieDetails == null){
+      return _buildProgressBar();
+    }
+
     return new Container(
       padding: EdgeInsets.all(8),
       child: Column(
@@ -165,6 +169,7 @@ class _DetailsPageStateState extends State<DetailsPage> {
       color: Colors.blueGrey,
       child: Center(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             CircularProgressIndicator(),
           ],
@@ -172,4 +177,5 @@ class _DetailsPageStateState extends State<DetailsPage> {
       ),
     );
   }
+
 }

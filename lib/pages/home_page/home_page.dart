@@ -100,9 +100,9 @@ class HomePage extends StatelessWidget {
 
         BaseService service = ServiceProvider.of(context).service;
 
-        return DetailsPage(
-          movieStream: service.getMovieDetails("${movie.id}"),
-          movie: movie,
+        return ScopedModel<MovieDetailsModel>(
+          model: MovieDetailsModel(stream: service.getMovieDetails("${movie.id}")),
+          child: DetailsPage(movie: movie),
         );
       },
     ));
