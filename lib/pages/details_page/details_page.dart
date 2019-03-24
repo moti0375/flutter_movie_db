@@ -34,7 +34,7 @@ class DetailsPage extends StatelessWidget {
     if (movieDetails != null) {
       return FadeInImage.memoryNetwork(
         placeholder: kTransparentImage,
-        image: TmdbService.buildImageUrl(movieDetails.poster_path),
+        image: TmdbService.buildImageUrl(movieDetails.backdrop_path),
         fit: BoxFit.fill,
       );
     } else {
@@ -73,14 +73,13 @@ class DetailsPage extends StatelessWidget {
     }
 
     return new Container(
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            height: 250,
+            padding: EdgeInsets.symmetric(horizontal: 1),
             child: Hero(
               tag: movieDetails.title,
               child: Container(
