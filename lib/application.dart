@@ -13,12 +13,15 @@ import 'package:flutter/cupertino.dart';
 class MvdbApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
+    BaseService service = TmdbService();
+
     return ServiceProvider(
-      service: TmdbService(),
+      service: service,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primaryColor: Colors.white),
-        home: HomePage(),
+        home: HomePage(service: service),
       ),
     );
   }
