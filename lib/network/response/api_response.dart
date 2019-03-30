@@ -2,7 +2,7 @@ import 'package:flutter_movie_db/data/model/movie.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'api_response.g.dart';
 
-@JsonSerializable(nullable: false)
+@JsonSerializable(nullable: true, includeIfNull: true)
 class ApiResponse{
   ApiResponse({this.results});
   int page;

@@ -1,5 +1,6 @@
+import 'package:flutter_movie_db/data/model/genre.dart';
 import 'package:flutter_movie_db/data/model/movie.dart';
-import 'package:flutter_movie_db/data/model/movie_details.dart';
+import 'package:flutter_movie_db/network/response/details_response.dart';
 import 'package:flutter_movie_db/network/response/api_response.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
@@ -21,6 +22,19 @@ class ApiResponseJsonSerializer extends Serializer<ApiResponse> with _$ApiRespon
 }
 
 @GenSerializer()
+class GenereJsonSerializer extends Serializer<Genre> with _$GenereJsonSerializer {
+  @override
+  fromMap(Map map) {
+    return Genre.fromJson(map);
+  }
+
+  @override
+  Map<String, dynamic> toMap(model) {
+    return null;
+  }
+}
+
+@GenSerializer()
 class MovieJsonSerializer extends Serializer<Movie> with _$MovieJsonSerializer {
   @override
   fromMap(Map map) {
@@ -34,10 +48,10 @@ class MovieJsonSerializer extends Serializer<Movie> with _$MovieJsonSerializer {
 }
 
 @GenSerializer()
-class MovieDetailsJsonSerializer extends Serializer<MovieDetails> with _$MovieDetailsJsonSerializer {
+class MovieDetailsJsonSerializer extends Serializer<DetailsResponse> with _$MovieDetailsJsonSerializer {
   @override
   fromMap(Map map) {
-    return MovieDetails.fromJson(map);
+    return DetailsResponse.fromJson(map);
   }
 
   @override

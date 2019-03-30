@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/model/movie.dart';
-import 'package:flutter_movie_db/data/model/movie_details.dart';
+import 'package:flutter_movie_db/network/response/details_response.dart';
 
 
 abstract class BaseService{
   Future<List<Movie>> getTopRatedMovies();
-  Stream<MovieDetails> getMovieDetails(String id);
-  Stream<List<Movie>> getNowPlaying();
+  Stream<DetailsResponse> getMovieDetails(String id);
+  Stream<List<Media>> getNowPlaying();
+  Stream<List<Media>> getTopRatedTv();
+  Stream<Media> getMediaDetails(MediaType type, String id);
+
 }
 
 
 class MockService implements BaseService{
   @override
-  Stream<MovieDetails> getMovieDetails(String id) {
+  Stream<DetailsResponse> getMovieDetails(String id) {
     return null;
   }
 
@@ -41,7 +45,19 @@ class MockService implements BaseService{
   }
 
   @override
-  Stream<List<Movie>> getNowPlaying() {
+  Stream<List<Media>> getNowPlaying() {
+    return null;
+  }
+
+  @override
+  Stream<List<Media>> getTopRatedTv() {
+    // TODO: implement getTopRatedTv
+    return null;
+  }
+
+  @override
+  Stream<Media> getMediaDetails(MediaType type, String id) {
+    // TODO: implement getMediaDetails
     return null;
   }
 

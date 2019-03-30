@@ -1,6 +1,6 @@
-import 'package:flutter_movie_db/data/model/movie_details.dart';
 import 'package:flutter_movie_db/network/response/api_response.dart';
 import 'package:flutter_movie_db/network/response/api_response_serializer.dart';
+import 'package:flutter_movie_db/network/response/details_response.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
@@ -9,15 +9,16 @@ import 'package:http/http.dart';
 
 part 'base_http_client.jretro.dart';
 
-@GenApiClient(path: "movie")
-class MovieApi extends ApiClient with _$MovieApiClient {
+@GenApiClient()
+class AppApi extends ApiClient with _$AppApiClient {
 
   final String apiKey;
   final resty.Route base;
-  MovieApi({this.base, this.apiKey}){
+  AppApi({this.base, this.apiKey}){
     final repo = JsonRepo()..add(ApiResponseJsonSerializer());
     repo..add(MovieJsonSerializer());
     repo..add(MovieDetailsJsonSerializer());
+    repo..add(GenereJsonSerializer());
 
     globalClient = Client();
     this.jsonConverter = repo;
@@ -28,13 +29,18 @@ class MovieApi extends ApiClient with _$MovieApiClient {
     });
   }
 
-  @GetReq(path: "/top_rated")
+  @GetReq(path: "movie/top_rated")
   Future<ApiResponse> getTopRatedMovies();
 
-  @GetReq(path: ":id")
-  Future<MovieDetails> getMovieDetails(@PathParam() String id);
+  @GetReq(path: "movie/:id")
+  Future<DetailsResponse> getMovieDetails(@PathParam() String id);
 
-  @GetReq(path: "/now_playing")
+  @GetReq(path: "movie/now_playing")
   Future<ApiResponse> getNowPlayingMovies();
 
+  @GetReq(path: "tv/top_rated")
+  Future<ApiResponse> getTopRatedTv();
+
+  @GetReq(path: ":type/:id")
+  Future<DetailsResponse> getMediaDetails(@PathParam() String type, @PathParam() String id);
 }

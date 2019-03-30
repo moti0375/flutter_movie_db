@@ -9,8 +9,9 @@ part of 'api_response.dart';
 ApiResponse _$ApiResponseFromJson(Map<String, dynamic> json) {
   return ApiResponse(
       results: (json['results'] as List)
-          .map((e) => Movie.fromJson(e as Map<String, dynamic>))
-          .toList())
+          ?.map((e) =>
+              e == null ? null : Movie.fromJson(e as Map<String, dynamic>))
+          ?.toList())
     ..page = json['page'] as int
     ..total_results = json['total_results'] as int
     ..total_pages = json['total_pages'] as int;

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_movie_db/data/model/movie.dart';
+import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/service/tmdb_service.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:http/http.dart' as http;
@@ -10,7 +10,7 @@ class ImageItem extends StatelessWidget {
   ImageItem({this.callback, this.movie});
 
   final VoidCallback callback;
-  final Movie movie;
+  final Media movie;
 
   @override
   Widget build(BuildContext context) {

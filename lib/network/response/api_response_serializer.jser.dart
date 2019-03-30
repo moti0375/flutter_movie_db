@@ -38,7 +38,30 @@ abstract class _$ApiResponseJsonSerializer implements Serializer<ApiResponse> {
   }
 }
 
+abstract class _$GenereJsonSerializer implements Serializer<Genre> {
+  @override
+  Map<String, dynamic> toMap(Genre model) {
+    if (model == null) return null;
+    Map<String, dynamic> ret = <String, dynamic>{};
+    setMapValue(ret, 'id', model.id);
+    setMapValue(ret, 'name', model.name);
+    return ret;
+  }
+
+  @override
+  Genre fromMap(Map map) {
+    if (map == null) return null;
+    final obj = new Genre(
+        id: map['id'] as int ?? getJserDefault('id'),
+        name: map['name'] as String ?? getJserDefault('name'));
+    return obj;
+  }
+}
+
 abstract class _$MovieJsonSerializer implements Serializer<Movie> {
+  Serializer<Genre> __genereJsonSerializer;
+  Serializer<Genre> get _genereJsonSerializer =>
+      __genereJsonSerializer ??= new GenereJsonSerializer();
   @override
   Map<String, dynamic> toMap(Movie model) {
     if (model == null) return null;
@@ -47,6 +70,7 @@ abstract class _$MovieJsonSerializer implements Serializer<Movie> {
     setMapValue(ret, 'id', model.id);
     setMapValue(ret, 'vote_average', model.vote_average);
     setMapValue(ret, 'title', model.title);
+    setMapValue(ret, 'name', model.name);
     setMapValue(ret, 'popularity', model.popularity);
     setMapValue(ret, 'poster_path', model.poster_path);
     setMapValue(ret, 'original_language', model.original_language);
@@ -55,6 +79,12 @@ abstract class _$MovieJsonSerializer implements Serializer<Movie> {
     setMapValue(ret, 'adult', model.adult);
     setMapValue(ret, 'overview', model.overview);
     setMapValue(ret, 'release_date', model.release_date);
+    setMapValue(ret, 'first_air_date', model.first_air_date);
+    setMapValue(
+        ret,
+        'genres',
+        codeIterable(
+            model.genres, (val) => _genereJsonSerializer.toMap(val as Genre)));
     return ret;
   }
 
@@ -66,6 +96,7 @@ abstract class _$MovieJsonSerializer implements Serializer<Movie> {
     obj.id = map['id'] as int;
     obj.vote_average = map['vote_average'] as double;
     obj.title = map['title'] as String;
+    obj.name = map['name'] as String;
     obj.popularity = map['popularity'] as double;
     obj.poster_path = map['poster_path'] as String;
     obj.original_language = map['original_language'] as String;
@@ -74,14 +105,20 @@ abstract class _$MovieJsonSerializer implements Serializer<Movie> {
     obj.adult = map['adult'] as bool;
     obj.overview = map['overview'] as String;
     obj.release_date = map['release_date'] as String;
+    obj.first_air_date = map['first_air_date'] as String;
+    obj.genres = codeIterable<Genre>(map['genres'] as Iterable,
+        (val) => _genereJsonSerializer.fromMap(val as Map));
     return obj;
   }
 }
 
 abstract class _$MovieDetailsJsonSerializer
-    implements Serializer<MovieDetails> {
+    implements Serializer<DetailsResponse> {
+  Serializer<Genre> __genereJsonSerializer;
+  Serializer<Genre> get _genereJsonSerializer =>
+      __genereJsonSerializer ??= new GenereJsonSerializer();
   @override
-  Map<String, dynamic> toMap(MovieDetails model) {
+  Map<String, dynamic> toMap(DetailsResponse model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'adult', model.adult);
@@ -93,20 +130,28 @@ abstract class _$MovieDetailsJsonSerializer
     setMapValue(ret, 'overview', model.overview);
     setMapValue(ret, 'poster_path', model.poster_path);
     setMapValue(ret, 'release_date', model.release_date);
+    setMapValue(ret, 'first_air_date', model.first_air_date);
     setMapValue(ret, 'revenue', model.revenue);
     setMapValue(ret, 'runtime', model.runtime);
     setMapValue(ret, 'status', model.status);
     setMapValue(ret, 'title', model.title);
+    setMapValue(ret, 'name', model.name);
     setMapValue(ret, 'tagline', model.tagline);
     setMapValue(ret, 'vote_average', model.vote_average);
+    setMapValue(ret, 'popularity', model.popularity);
     setMapValue(ret, 'vote_count', model.vote_count);
+    setMapValue(
+        ret,
+        'genres',
+        codeIterable(
+            model.genres, (val) => _genereJsonSerializer.toMap(val as Genre)));
     return ret;
   }
 
   @override
-  MovieDetails fromMap(Map map) {
+  DetailsResponse fromMap(Map map) {
     if (map == null) return null;
-    final obj = new MovieDetails();
+    final obj = new DetailsResponse();
     obj.adult = map['adult'] as bool;
     obj.backdrop_path = map['backdrop_path'] as String;
     obj.budget = map['budget'] as int;
@@ -116,13 +161,18 @@ abstract class _$MovieDetailsJsonSerializer
     obj.overview = map['overview'] as String;
     obj.poster_path = map['poster_path'] as String;
     obj.release_date = map['release_date'] as String;
+    obj.first_air_date = map['first_air_date'] as String;
     obj.revenue = map['revenue'] as int;
     obj.runtime = map['runtime'] as int;
     obj.status = map['status'] as String;
     obj.title = map['title'] as String;
+    obj.name = map['name'] as String;
     obj.tagline = map['tagline'] as String;
     obj.vote_average = map['vote_average'] as double;
+    obj.popularity = map['popularity'] as double;
     obj.vote_count = map['vote_count'] as int;
+    obj.genres = codeIterable<Genre>(map['genres'] as Iterable,
+        (val) => _genereJsonSerializer.fromMap(val as Map));
     return obj;
   }
 }

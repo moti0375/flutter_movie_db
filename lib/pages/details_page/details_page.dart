@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/model/movie.dart';
-import 'package:flutter_movie_db/data/model/movie_details.dart';
+import 'package:flutter_movie_db/network/response/details_response.dart';
 import 'package:flutter_movie_db/ui/PlatformAppBar.dart';
 import 'package:flutter_movie_db/data/service/tmdb_service.dart';
 import 'package:flutter_movie_db/ui/rating_widget.dart';
@@ -12,8 +13,8 @@ import 'package:transparent_image/transparent_image.dart';
 class DetailsPage extends StatelessWidget {
   DetailsPage({@required this.movieStream, @required this.movie});
 
-  final Stream<MovieDetails> movieStream;
-  final Movie movie;
+  final Stream<Media> movieStream;
+  final Media movie;
   final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
 
   @override
@@ -27,11 +28,11 @@ class DetailsPage extends StatelessWidget {
     );
   }
 
-  Widget getImageOrPlaceHolder(MovieDetails movieDetails) {
+  Widget getImageOrPlaceHolder(Media movieDetails) {
     if (movieDetails != null) {
       return FadeInImage.memoryNetwork(
         placeholder: kTransparentImage,
-        image: TmdbService.buildImageUrl(movieDetails.poster_path),
+        image: TmdbService.buildImageUrl(movieDetails.backdrop_path),
         fit: BoxFit.fill,
       );
     } else {
@@ -45,19 +46,19 @@ class DetailsPage extends StatelessWidget {
   }
 
   Widget _createStream() {
-    return StreamBuilder<MovieDetails>(
-      stream: movieStream,
-      builder: (context, snapshot) {
-        if(snapshot.connectionState == ConnectionState.waiting){
-          return _loadingWidget();
-        } else {
-          return _buildContent(snapshot.data);
-        }
-      }
-    );
+    return StreamBuilder<Media>(
+        stream: movieStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _loadingWidget();
+          } else {
+            return _buildContent(snapshot.data);
+          }
+        });
   }
 
-  Widget _buildContent(MovieDetails movieDetails) {
+  Widget _buildContent(Media media) {
+    print("_buildContent: ${media.type}");
     return new Container(
       padding: EdgeInsets.all(8),
       child: Column(
@@ -68,10 +69,10 @@ class DetailsPage extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 8),
             height: 250,
             child: Hero(
-              tag: movieDetails.title,
+              tag: media.title,
               child: Container(
                 height: 300,
-                child: getImageOrPlaceHolder(movieDetails),
+                child: getImageOrPlaceHolder(media),
               ),
             ),
           ),
@@ -81,7 +82,7 @@ class DetailsPage extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: Text(
-              movieDetails.title,
+              media.title,
               textAlign: TextAlign.center,
               softWrap: true,
               style: TextStyle(
@@ -98,26 +99,35 @@ class DetailsPage extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Text(
-                  "${dateFormat.parse(movieDetails.release_date).year}",
-                  textAlign: TextAlign.center,
-                  softWrap: true,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: Colors.black.withOpacity(0.6),
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    "${dateFormat.parse(media.release_date).year}",
+                    textAlign: TextAlign.center,
+                    softWrap: true,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Colors.black.withOpacity(0.6),
+                    ),
                   ),
                 ),
-                Text(
-                  "${movieDetails.runtime}Min",
-                  textAlign: TextAlign.center,
-                  softWrap: true,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: Colors.black.withOpacity(0.6),
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    media.type == MediaType.tv ? media.genres.map((genre){
+                      return genre.name;
+                    }).toList().join(', ') :
+                    "${media.runtime}Min",
+                    textAlign: TextAlign.center,
+                    softWrap: true,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Colors.black.withOpacity(0.6),
+                    ),
                   ),
                 )
               ],
@@ -129,7 +139,7 @@ class DetailsPage extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: Text(
-              movieDetails.overview,
+              media.overview,
               textAlign: TextAlign.left,
               softWrap: true,
               style: TextStyle(
@@ -142,8 +152,8 @@ class DetailsPage extends StatelessWidget {
             height: 16,
           ),
           RatingWidget(
-            rating: movieDetails.vote_average * 0.5,
-            totalVoting: movieDetails.vote_count,
+            rating: media.vote_average * 0.5,
+            totalVoting: media.vote_count,
           )
         ],
       ),
@@ -155,6 +165,7 @@ class DetailsPage extends StatelessWidget {
       color: Colors.white,
       child: Center(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             CircularProgressIndicator(),
           ],
