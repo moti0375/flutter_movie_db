@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_movie_db/data/model/media.dart';
+import 'package:flutter_movie_db/data/model/media_models.dart';
 import 'package:flutter_movie_db/data/model/movie.dart';
 import 'package:flutter_movie_db/data/service/ServiceProvider.dart';
 import 'package:flutter_movie_db/data/service/base_service.dart';
@@ -31,11 +32,7 @@ class HomePage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: _buildAppBar(context),
-        body: Container(
-          height: size.height / 2,
-          padding: EdgeInsets.all(8),
-          child: _buildContent(),
-        ),
+        body: _buildContent(),
       ),
     );
   }
@@ -47,18 +44,39 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildContent() {
-    return StreamBuilder<List<Media>>(
-      stream: service.getNowPlaying(),
+    return StreamBuilder<List<MediaModels>>(
+      stream: service.getTopRatedMedias(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            snapshot.data == null ||
+            snapshot.data.isEmpty) {
           return _buildLoading();
         } else {
-          return MediaItemsLayout(
-            title: "TV Shows",
-            items: snapshot.data,
-            onItemClick: (media) {
-              _loadMovieDetailsAndNavigate(media, context);
-            },
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                SingleChildScrollView(
+                    child: ListView.builder(
+                      padding: EdgeInsets.all(2),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data.length,
+                      physics: ScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      itemBuilder: (context, index) {
+                        print("ListView.builder: ${snapshot.data.length} items");
+                        return MediaItemsLayout(
+                          title: snapshot.data[index].title,
+                          medias: snapshot.data[index],
+                          onItemClick: (media) {
+                            _loadMovieDetailsAndNavigate(media, context);
+                          },
+                        );
+                      },
+                    ),
+                ),
+              ],
+            ),
           );
         }
       },

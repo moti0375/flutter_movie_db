@@ -49,6 +49,7 @@ class ImageItem extends StatelessWidget {
     return InkWell(
       onTap: callback,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Expanded(

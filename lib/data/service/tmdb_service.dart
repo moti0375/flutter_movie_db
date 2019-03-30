@@ -1,4 +1,5 @@
 import 'package:flutter_movie_db/data/model/media.dart';
+import 'package:flutter_movie_db/data/model/media_models.dart';
 import 'package:flutter_movie_db/data/model/movie.dart';
 import 'package:flutter_movie_db/data/service/base_service.dart';
 import 'package:flutter_movie_db/network/base_http_client.dart';
@@ -125,5 +126,48 @@ class TmdbService implements BaseService {
         yield media;
         break;
     }
+  }
+
+  @override
+  Stream<List<MediaModels>> getTopRatedMedias() async* {
+    print("getTopRatedMedias: called");
+
+    List<MediaModels> items = List<MediaModels>();
+
+    ApiResponse apiResponse = await client.getTopRatedMovies();
+    print("getTopRatedMedias: after await");
+    List<Media> topRatedMovies = apiResponse.results.map((movie) {
+      return Media(
+          id: movie.id,
+          title: movie.title,
+          vote_count: movie.vote_count,
+          overview: movie.overview,
+          poster_path: movie.poster_path,
+          vote_average: movie.vote_average,
+          backdrop_path: movie.backdrop_path,
+          release_date: movie.release_date,
+          genres: movie.genres,
+          type: MediaType.movie);
+    }).toList();
+    items.add(MediaModels(items: topRatedMovies, title: "Top Rated Movies"));
+
+    ApiResponse tvResponse = await client.getTopRatedTv();
+    List<Media> topRatedTv = tvResponse.results.map((tv) {
+      return Media(
+          id: tv.id,
+          title: tv.name,
+          vote_count: tv.vote_count,
+          overview: tv.overview,
+          poster_path: tv.poster_path,
+          vote_average: tv.vote_average,
+          backdrop_path: tv.backdrop_path,
+          release_date: tv.first_air_date,
+          type: MediaType.tv,
+          genres: tv.genres);
+    }).toList();
+    items.add(MediaModels(items: topRatedTv, title: "Top Rated Tv"));
+
+    print("getTopRatedMedias: got ${items.length} items");
+    yield items;
   }
 }

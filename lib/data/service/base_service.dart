@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_db/data/model/media.dart';
+import 'package:flutter_movie_db/data/model/media_models.dart';
 import 'package:flutter_movie_db/data/model/movie.dart';
 import 'package:flutter_movie_db/network/response/details_response.dart';
 
@@ -10,7 +11,7 @@ abstract class BaseService{
   Stream<List<Media>> getNowPlaying();
   Stream<List<Media>> getTopRatedTv();
   Stream<Media> getMediaDetails(MediaType type, String id);
-
+  Stream<List<MediaModels>> getTopRatedMedias();
 }
 
 
@@ -58,6 +59,11 @@ class MockService implements BaseService{
   @override
   Stream<Media> getMediaDetails(MediaType type, String id) {
     // TODO: implement getMediaDetails
+    return null;
+  }
+
+  @override
+  Stream<List<MediaModels>> getTopRatedMedias() {
     return null;
   }
 
