@@ -1,15 +1,11 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_movie_db/data/model/movie.dart';
 import 'package:flutter_movie_db/data/service/ServiceProvider.dart';
 import 'package:flutter_movie_db/data/service/base_service.dart';
-import 'package:flutter_movie_db/data/service/tmdb_service.dart';
 import 'package:flutter_movie_db/pages/details_page/details_page.dart';
 import 'package:flutter_movie_db/ui/image_item.dart';
-import 'dart:async';
-import 'package:transparent_image/transparent_image.dart';
 
 import 'package:flutter_movie_db/ui/PlatformAppBar.dart';
 
