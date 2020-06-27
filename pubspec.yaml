@@ -26,6 +26,10 @@ dependencies:
   transparent_image: ^1.0.0
   http: ^0.12.0+1
   jaguar_retrofit: ^2.8.6
+  flutter_bloc: ^4.0.1
+  get_it: ^4.0.2
+  equatable: ^1.2.0
+  provider: ^4.1.3
 
 dev_dependencies:
   flutter_test:

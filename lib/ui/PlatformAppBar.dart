@@ -1,7 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart' show BuildContext;
 import 'package:flutter_movie_db/ui/PlatformWidget.dart';
-import 'package:flutter/cupertino.dart';
 
 class PlatformAppBar extends PlatformWidget<CupertinoNavigationBar, AppBar> {
 
@@ -19,7 +19,8 @@ class PlatformAppBar extends PlatformWidget<CupertinoNavigationBar, AppBar> {
   @override
   AppBar buildMaterialWidget(BuildContext context) {
     return AppBar(
-      backgroundColor: Theme.of(context).primaryColorLight,
+      elevation: 0,
+      centerTitle: true,
       title: title,
     );
   }

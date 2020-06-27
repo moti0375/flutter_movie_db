@@ -2,10 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_db/data/model/media.dart';
-import 'package:flutter_movie_db/data/model/movie.dart';
-import 'package:flutter_movie_db/network/response/details_response.dart';
+import 'package:flutter_movie_db/data/repository/tmdb_repository.dart';
 import 'package:flutter_movie_db/ui/PlatformAppBar.dart';
-import 'package:flutter_movie_db/data/service/tmdb_service.dart';
 import 'package:flutter_movie_db/ui/rating_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -32,7 +30,7 @@ class DetailsPage extends StatelessWidget {
     if (movieDetails != null) {
       return FadeInImage.memoryNetwork(
         placeholder: kTransparentImage,
-        image: TmdbService.buildImageUrl(movieDetails.backdrop_path),
+        image: TmdbRepository.buildImageUrl(movieDetails.backdrop_path),
         fit: BoxFit.fill,
       );
     } else {

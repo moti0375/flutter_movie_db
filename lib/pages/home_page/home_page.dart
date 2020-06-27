@@ -1,36 +1,52 @@
-import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_movie_db/data/model/media.dart';
-import 'package:flutter_movie_db/data/model/media_models.dart';
-import 'package:flutter_movie_db/data/model/movie.dart';
-import 'package:flutter_movie_db/data/service/ServiceProvider.dart';
-import 'package:flutter_movie_db/data/service/base_service.dart';
-import 'package:flutter_movie_db/data/service/tmdb_service.dart';
-import 'package:flutter_movie_db/pages/details_page/details_page.dart';
-import 'package:flutter_movie_db/ui/image_item.dart';
-import 'dart:async';
-
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_movie_db/data/repository/base_service.dart';
+import 'package:flutter_movie_db/pages/home_page/bloc.dart';
 import 'package:flutter_movie_db/ui/PlatformAppBar.dart';
-import 'package:flutter_movie_db/ui/media_grid_layout.dart';
-import 'package:flutter_movie_db/ui/media_items_layout.dart';
+import 'package:flutter_movie_db/ui/home_page_banner.dart';
+import 'package:flutter_movie_db/ui/media_carousel.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({this.service});
+class HomePage extends StatefulWidget {
+  final HomePageBloc bloc;
 
-  final BaseService service;
-  final List<Movie> movies = List<Movie>();
+  const HomePage({Key key, this.bloc}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+
+  static Widget create(BuildContext rootContext) {
+    return Consumer<BaseRepository>(
+      builder: (_, baseRepository, __) =>
+          BlocProvider<HomePageBloc>(
+            create: (_) => HomePageBloc(baseRepository),
+            child: Consumer<HomePageBloc>(
+              builder: (_, bloc, __) =>
+                  HomePage(
+                    bloc: bloc,
+                  ),
+            ),
+          ),
+    );
+  }
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    widget.bloc.add(LoadMovies());
+  }
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
     return SafeArea(
       left: false,
       right: false,
       top: false,
       child: Scaffold(
-        backgroundColor: Colors.black,
         appBar: _buildAppBar(context),
         body: _buildContent(),
       ),
@@ -38,99 +54,65 @@ class HomePage extends StatelessWidget {
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    PreferredSizeWidget appBar =
-        PlatformAppBar(title: Text("Flutter Movie DB")).build(context);
+    PreferredSizeWidget appBar = PlatformAppBar(title: Text("Flutter Movie DB")).build(context);
     return appBar;
   }
 
   Widget _buildContent() {
-    return StreamBuilder<List<MediaModels>>(
-      stream: service.getTopRatedMedias(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting ||
-            snapshot.data == null ||
-            snapshot.data.isEmpty) {
-          return _buildLoading();
-        } else {
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                SingleChildScrollView(
-                    child: ListView.builder(
-                      padding: EdgeInsets.all(2),
-                      shrinkWrap: true,
-                      itemCount: snapshot.data.length,
-                      physics: ScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: (context, index) {
-                        print("ListView.builder: ${snapshot.data.length} items");
-                        return MediaItemsLayout(
-                          title: snapshot.data[index].title,
-                          medias: snapshot.data[index],
-                          onItemClick: (media) {
-                            _loadMovieDetailsAndNavigate(media, context);
-                          },
-                        );
-                      },
-                    ),
-                ),
-              ],
-            ),
-          );
-        }
-      },
-    );
-  }
+    var size = MediaQuery
+        .of(context)
+        .size;
 
-  Widget _buildGridLayout(List<Media> items, BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    final double itemHeight = (size.height);
-    final double itemWidth = size.width;
-
-    return GridView.count(
-      mainAxisSpacing: 0,
-      crossAxisSpacing: 0,
-      crossAxisCount: 1,
-      scrollDirection: Axis.horizontal,
-      childAspectRatio: (itemHeight / itemWidth),
-      controller: new ScrollController(keepScrollOffset: true),
-      children: List.generate(items.length, (index) {
-        return ImageItem(
-          movie: items[index],
-          callback: () {
-            print("Clicked ${items[index].title}");
-            _loadMovieDetailsAndNavigate(items[index], context);
-          },
-        );
-      }),
-    );
-  }
-
-  void _loadMovieDetailsAndNavigate(Media media, BuildContext context) {
-    print("_loadMovieDetailsAndNavigate: ${media.id}, ${media.type}");
-
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) {
-        return DetailsPage(
-          movieStream: service.getMediaDetails(media.type, "${media.id}"),
-          movie: media,
-        );
-      },
-    ));
-  }
-
-  Widget _buildLoading() {
     return Container(
-      color: Colors.white,
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+      padding: EdgeInsets.all(16),
+      height: size.height,
+      width: size.width,
+      child: SingleChildScrollView(
+        child: Column(
           children: <Widget>[
-            CircularProgressIndicator(),
+            _buildNowPlayingBanner(),
+            _buildTopRatedCarousel(),
+            _buildTvCarousel()
           ],
         ),
       ),
+    );
+  }
+
+  BlocBuilder<HomePageBloc, HomePageState> _buildTvCarousel() {
+    return BlocBuilder<HomePageBloc, HomePageState>(
+      condition: (lastState, newState) => newState is TvLoaded,
+      builder: (context, state) {
+        if (state is TvLoaded) {
+          return MediaCarousel(models: state.models,);
+        }
+        return SizedBox.shrink();
+      },
+    );
+  }
+
+
+  BlocBuilder<HomePageBloc, HomePageState> _buildTopRatedCarousel() {
+    return BlocBuilder<HomePageBloc, HomePageState>(
+      condition: (lastState, newState) => newState is TopRatedLoaded,
+      builder: (context, state) {
+        if (state is TopRatedLoaded) {
+          return MediaCarousel(models: state.models,);
+        }
+        return SizedBox.shrink();
+      },
+    );
+  }
+
+  BlocBuilder<HomePageBloc, HomePageState> _buildNowPlayingBanner() {
+    return BlocBuilder<HomePageBloc, HomePageState>(
+      condition: (lastState, newState) => newState is NowPlayingLoaded,
+      builder: (context, state) {
+        if (state is NowPlayingLoaded) {
+          return HomePageBanner(models: state.models,);
+        }
+        return SizedBox.shrink();
+      },
     );
   }
 }

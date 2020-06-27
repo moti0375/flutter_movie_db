@@ -1,10 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_db/data/model/media.dart';
-import 'package:flutter_movie_db/data/service/tmdb_service.dart';
+import 'package:flutter_movie_db/data/repository/tmdb_repository.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:http/http.dart' as http;
 
 class ImageItem extends StatelessWidget {
   ImageItem({this.callback, this.movie});
@@ -14,37 +11,6 @@ class ImageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<Uint8List> _fetchImage(String url) async {
-      http.Response response = await http.get(url);
-      return response.bodyBytes;
-    }
-
-    Widget _loadingWidget(String url) {
-      return new FutureBuilder<Uint8List>(
-        future: _fetchImage(url),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return new Image.memory(
-              snapshot.data,
-              fit: BoxFit.fill,
-            );
-          } else if (snapshot.hasError) {
-            return new Icon(Icons.broken_image);
-          } else {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[CircularProgressIndicator()],
-            );
-          }
-        },
-      );
-//      return FadeInImage.memoryNetwork(
-//        placeholder: kTransparentImage,
-//        image:
-//        "${TmdbService.IMAGES_BASE_URL}/${movie.poster_path}",
-//        fit: BoxFit.fill,
-//      );
-    }
 
     return InkWell(
       onTap: callback,
@@ -63,7 +29,7 @@ class ImageItem extends StatelessWidget {
                   tag: movie.title,
                   child: FadeInImage.memoryNetwork(
                     placeholder: kTransparentImage,
-                    image: TmdbService.buildImageUrl(movie.poster_path),
+                    image: TmdbRepository.buildImageUrl(movie.poster_path),
                     fit: BoxFit.fill,
                   ),
                 ),

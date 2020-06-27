@@ -1,16 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/model/media_models.dart';
-import 'package:flutter_movie_db/data/model/movie.dart';
-import 'package:flutter_movie_db/data/service/base_service.dart';
+import 'package:flutter_movie_db/data/repository/base_service.dart';
 import 'package:flutter_movie_db/network/base_http_client.dart';
 import 'package:flutter_movie_db/network/response/api_response.dart';
 import 'package:flutter_movie_db/network/response/details_response.dart';
-import 'dart:async';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
-import 'package:http/http.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-class TmdbService implements BaseService {
+class TmdbRepository implements BaseRepository {
   static const String BASE_URI = "https://api.themoviedb.org/3/";
   static const String IMAGES_BASE_URL = "https://image.tmdb.org/t/p/w500/";
   static const String API_KEY = "b331218ddcbd128634135abf7673fab5";
@@ -19,20 +18,29 @@ class TmdbService implements BaseService {
     ..jsonConverter;
 
   @override
-  Stream<DetailsResponse> getMovieDetails(String id) async* {
+  Future<DetailsResponse> getMovieDetails(String id) async {
     print("tmdb service: getMovieDetails: $id");
-    DetailsResponse details = await client.getMovieDetails(id);
-    yield details;
+    return client.getMovieDetails(id);
   }
 
   @override
-  Future<List<Movie>> getTopRatedMovies() async {
+  Future<List<Media>> getTopRatedMovies() async {
     // print("MvdbService: getMovies");
 
     ApiResponse response = await client.getTopRatedMovies();
-
     // print("response: ${response.toString()}" );
-    return response.results;
+    return response.results.map((movie) =>
+        Media(
+            id: movie.id,
+            title: movie.title,
+            vote_count: movie.vote_count,
+            overview: movie.overview,
+            poster_path: movie.poster_path,
+            vote_average: movie.vote_average,
+            backdrop_path: movie.backdrop_path,
+            release_date: movie.release_date,
+            genres: movie.genres,
+            type: MediaType.movie)).toList();
   }
 
   static String buildImageUrl(String imageName) {
@@ -40,14 +48,14 @@ class TmdbService implements BaseService {
   }
 
   @override
-  Stream<List<Media>> getNowPlaying() async* {
+  Future<List<Media>> getNowPlaying() async {
     print("getNowPlaying: called ");
     ApiResponse eventStream =
-        await client.getNowPlayingMovies().catchError((error) {
+    await client.getNowPlayingMovies().catchError((error) {
       print("Error: ${error.toString()}");
     });
     print("getNowPlaying: done ");
-    List<Media> models = eventStream.results.map((movie) {
+    return eventStream.results.map((movie) {
       return Media(
           id: movie.id,
           title: movie.title,
@@ -60,15 +68,13 @@ class TmdbService implements BaseService {
           genres: movie.genres,
           type: MediaType.movie);
     }).toList();
-    print("getNowPlaying: after ${models.length} media items");
-    yield models;
   }
 
   @override
-  Stream<List<Media>> getTopRatedTv() async* {
+  Future<List<Media>> getTopRatedTv() async {
     print("getTopRatedTv: called ");
     ApiResponse response = await client.getTopRatedTv();
-    List<Media> medias = response.results.map((tv) {
+    return response.results.map((tv) {
       return Media(
           id: tv.id,
           title: tv.name,
@@ -81,11 +87,10 @@ class TmdbService implements BaseService {
           type: MediaType.tv,
           genres: tv.genres);
     }).toList();
-    yield medias;
   }
 
   @override
-  Stream<Media> getMediaDetails(MediaType type, String id) async* {
+  Future<Media> getMediaDetails(MediaType type, String id) async {
     DetailsResponse response = await client
         .getMediaDetails(type.toString().split(".").last, id)
         .catchError((error) {
@@ -108,8 +113,7 @@ class TmdbService implements BaseService {
             vote_count: response.vote_count,
             genres: response.genres,
             type: type);
-        yield media;
-        break;
+        return media;
       case MediaType.tv:
         Media media = Media(
             id: response.id,
@@ -123,13 +127,13 @@ class TmdbService implements BaseService {
             vote_count: response.vote_count,
             genres: response.genres,
             type: type);
-        yield media;
-        break;
+        return media;
     }
+    return null;
   }
 
   @override
-  Stream<List<MediaModels>> getTopRatedMedias() async* {
+  Future<List<MediaModels>> getTopRatedMedias() async {
     print("getTopRatedMedias: called");
 
     List<MediaModels> items = List<MediaModels>();
@@ -168,6 +172,6 @@ class TmdbService implements BaseService {
     items.add(MediaModels(items: topRatedTv, title: "Top Rated Tv"));
 
     print("getTopRatedMedias: got ${items.length} items");
-    yield items;
+    return items;
   }
 }

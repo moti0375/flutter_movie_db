@@ -9,7 +9,7 @@ part of 'api_response_serializer.dart';
 abstract class _$ApiResponseJsonSerializer implements Serializer<ApiResponse> {
   Serializer<Movie> __movieJsonSerializer;
   Serializer<Movie> get _movieJsonSerializer =>
-      __movieJsonSerializer ??= new MovieJsonSerializer();
+      __movieJsonSerializer ??= MovieJsonSerializer();
   @override
   Map<String, dynamic> toMap(ApiResponse model) {
     if (model == null) return null;
@@ -28,7 +28,7 @@ abstract class _$ApiResponseJsonSerializer implements Serializer<ApiResponse> {
   @override
   ApiResponse fromMap(Map map) {
     if (map == null) return null;
-    final obj = new ApiResponse();
+    final obj = ApiResponse();
     obj.page = map['page'] as int;
     obj.total_results = map['total_results'] as int;
     obj.total_pages = map['total_pages'] as int;
@@ -51,7 +51,7 @@ abstract class _$GenereJsonSerializer implements Serializer<Genre> {
   @override
   Genre fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Genre(
+    final obj = Genre(
         id: map['id'] as int ?? getJserDefault('id'),
         name: map['name'] as String ?? getJserDefault('name'));
     return obj;
@@ -61,7 +61,7 @@ abstract class _$GenereJsonSerializer implements Serializer<Genre> {
 abstract class _$MovieJsonSerializer implements Serializer<Movie> {
   Serializer<Genre> __genereJsonSerializer;
   Serializer<Genre> get _genereJsonSerializer =>
-      __genereJsonSerializer ??= new GenereJsonSerializer();
+      __genereJsonSerializer ??= GenereJsonSerializer();
   @override
   Map<String, dynamic> toMap(Movie model) {
     if (model == null) return null;
@@ -91,7 +91,7 @@ abstract class _$MovieJsonSerializer implements Serializer<Movie> {
   @override
   Movie fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Movie();
+    final obj = Movie();
     obj.vote_count = map['vote_count'] as int;
     obj.id = map['id'] as int;
     obj.vote_average = map['vote_average'] as double;
@@ -116,7 +116,7 @@ abstract class _$MovieDetailsJsonSerializer
     implements Serializer<DetailsResponse> {
   Serializer<Genre> __genereJsonSerializer;
   Serializer<Genre> get _genereJsonSerializer =>
-      __genereJsonSerializer ??= new GenereJsonSerializer();
+      __genereJsonSerializer ??= GenereJsonSerializer();
   @override
   Map<String, dynamic> toMap(DetailsResponse model) {
     if (model == null) return null;
@@ -151,7 +151,7 @@ abstract class _$MovieDetailsJsonSerializer
   @override
   DetailsResponse fromMap(Map map) {
     if (map == null) return null;
-    final obj = new DetailsResponse();
+    final obj = DetailsResponse();
     obj.adult = map['adult'] as bool;
     obj.backdrop_path = map['backdrop_path'] as String;
     obj.budget = map['budget'] as int;
