@@ -43,8 +43,11 @@ abstract class _$GenereJsonSerializer implements Serializer<Genre> {
   Map<String, dynamic> toMap(Genre model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
+    setMapValue(ret, 'props',
+        codeIterable(model.props, (val) => passProcessor.serialize(val)));
     setMapValue(ret, 'id', model.id);
     setMapValue(ret, 'name', model.name);
+    setMapValue(ret, 'stringify', model.stringify);
     return ret;
   }
 

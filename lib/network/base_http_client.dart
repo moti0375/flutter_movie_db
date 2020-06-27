@@ -1,11 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter_movie_db/network/response/api_response.dart';
 import 'package:flutter_movie_db/network/response/api_response_serializer.dart';
 import 'package:flutter_movie_db/network/response/details_response.dart';
+import 'package:http/http.dart';
+import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
-import 'package:jaguar_resty/jaguar_resty.dart' as resty;
-import 'dart:async';
-import 'package:http/http.dart';
 
 part 'base_http_client.jretro.dart';
 
@@ -14,6 +15,7 @@ class AppApi extends ApiClient with _$AppApiClient {
 
   final String apiKey;
   final resty.Route base;
+
   AppApi({this.base, this.apiKey}){
     final repo = JsonRepo()..add(ApiResponseJsonSerializer());
     repo..add(MovieJsonSerializer());
@@ -37,6 +39,9 @@ class AppApi extends ApiClient with _$AppApiClient {
 
   @GetReq(path: "movie/now_playing")
   Future<ApiResponse> getNowPlayingMovies();
+
+  @GetReq(path: "movie/popular")
+  Future<ApiResponse> getPopularMovies();
 
   @GetReq(path: "tv/top_rated")
   Future<ApiResponse> getTopRatedTv();

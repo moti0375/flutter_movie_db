@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/model/media_models.dart';
 import 'package:flutter_movie_db/data/repository/tmdb_repository.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class HomePageBanner extends StatelessWidget {
   final MediaModels models;
+  final ValueChanged<Media> onClickListener;
+  final VoidCallback onMoreClickListener;
 
-  const HomePageBanner({Key key, this.models}) : super(key: key);
+  const HomePageBanner({Key key, this.models, this.onClickListener, this.onMoreClickListener}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
 
-    PageController controller = PageController(viewportFraction: 0.95, initialPage: 1);
+    PageController controller = PageController(viewportFraction: 0.9, initialPage: 0);
 
     List<Widget> _buildBannerItems() {
       return models.items
           .map<Widget>((e) => Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: InkWell(
-                  onTap: () {
-                    print("onTap");
-                  },
+                  onTap: () => onClickListener(e),
                   child: Container(
                     child: Stack(
                       fit: StackFit.expand,
@@ -83,7 +84,7 @@ class HomePageBanner extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => print("Action clicked"),
+                  onTap: onMoreClickListener,
                   child: Text(
                     'More',
                     style: TextStyle(

@@ -6,8 +6,10 @@ import 'package:transparent_image/transparent_image.dart';
 
 class MediaCarousel extends StatelessWidget {
   final MediaModels models;
+  final ValueChanged<Media> onClickListener;
+  final VoidCallback onMoreClickListener;
 
-  const MediaCarousel({Key key, this.models}) : super(key: key);
+  const MediaCarousel({Key key, this.models, this.onClickListener, this.onMoreClickListener}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class MediaCarousel extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () => print("Action clicked"),
+                onTap: onMoreClickListener,
                 child: Text(
                   'More',
                   style: TextStyle(
@@ -91,37 +93,52 @@ class MediaCarousel extends StatelessWidget {
                 )
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Stack(
-                children: <Widget>[
-                  ClipRRect(
-                    child: Hero(
-                      tag: media.id,
-                      child: FadeInImage.memoryNetwork(
-                        width: (MediaQuery.of(context).size.width / 2),
-                        height: (MediaQuery.of(context).size.width / 2),
-                        placeholder: kTransparentImage,
-                        image: TmdbRepository.buildImageUrl(media.poster_path),
-                        fit: BoxFit.fill,
+            child: InkWell(
+              onTap: () => onClickListener(media),
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Stack(
+                  children: <Widget>[
+                    ClipRRect(
+                      child: Hero(
+                        tag: media.id,
+                        child: FadeInImage.memoryNetwork(
+                          width: (MediaQuery
+                              .of(context)
+                              .size
+                              .width / 2),
+                          height: (MediaQuery
+                              .of(context)
+                              .size
+                              .width / 2),
+                          placeholder: kTransparentImage,
+                          image: TmdbRepository.buildImageUrl(media.poster_path),
+                          fit: BoxFit.fill,
+                        ),
                       ),
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(bottom: 8, left: 8),
-                    width: (MediaQuery.of(context).size.width / 2),
-                    height: (MediaQuery.of(context).size.width / 2),
-                    alignment: Alignment.bottomLeft,
-                    child: Text(
-                      media.title,
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    Container(
+                      padding: EdgeInsets.only(bottom: 8, left: 8),
+                      width: (MediaQuery
+                          .of(context)
+                          .size
+                          .width / 2),
+                      height: (MediaQuery
+                          .of(context)
+                          .size
+                          .width / 2),
+                      alignment: Alignment.bottomLeft,
+                      child: Text(
+                        media.title,
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                          gradient: LinearGradient(colors: [Colors.transparent, Colors.black87], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
                     ),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        gradient: LinearGradient(colors: [Colors.transparent, Colors.black87], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           )

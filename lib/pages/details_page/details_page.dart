@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/repository/tmdb_repository.dart';
@@ -9,10 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class DetailsPage extends StatelessWidget {
-  DetailsPage({@required this.movieStream, @required this.movie});
+  DetailsPage({@required this.media});
 
-  final Stream<Media> movieStream;
-  final Media movie;
+  final Media media;
   final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
 
   @override
@@ -20,9 +17,9 @@ class DetailsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[400],
       appBar: PlatformAppBar(
-        title: Text(movie.title),
+        title: Text(media.title),
       ).build(context),
-      body: _createStream(),
+      body: _buildContent(media, context),
     );
   }
 
@@ -30,7 +27,7 @@ class DetailsPage extends StatelessWidget {
     if (movieDetails != null) {
       return FadeInImage.memoryNetwork(
         placeholder: kTransparentImage,
-        image: TmdbRepository.buildImageUrl(movieDetails.backdrop_path),
+        image: TmdbRepository.buildImageUrl(movieDetails.poster_path),
         fit: BoxFit.fill,
       );
     } else {
@@ -43,36 +40,30 @@ class DetailsPage extends StatelessWidget {
     }
   }
 
-  Widget _createStream() {
-    return StreamBuilder<Media>(
-        stream: movieStream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return _loadingWidget();
-          } else {
-            return _buildContent(snapshot.data);
-          }
-        });
-  }
 
-  Widget _buildContent(Media media) {
+  Widget _buildContent(Media media, BuildContext context) {
     print("_buildContent: ${media.type}");
     return new Container(
-      padding: EdgeInsets.all(8),
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            height: 250,
             child: Hero(
-              tag: media.title,
+              tag: media.id,
               child: Container(
-                height: 300,
                 child: getImageOrPlaceHolder(media),
               ),
             ),
+            width: MediaQuery
+                .of(context)
+                .size
+                .width,
+            height: MediaQuery
+                .of(context)
+                .size
+                .width * 9 / 16,
           ),
           SizedBox(
             height: 16,

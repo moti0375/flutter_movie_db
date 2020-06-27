@@ -23,6 +23,11 @@ abstract class _$AppApiClient implements ApiClient {
     return req.go(throwOnErr: true).map(decodeOne);
   }
 
+  Future<ApiResponse> getPopularMovies() async {
+    var req = base.get.path(basePath).path("movie/popular");
+    return req.go(throwOnErr: true).map(decodeOne);
+  }
+
   Future<ApiResponse> getTopRatedTv() async {
     var req = base.get.path(basePath).path("tv/top_rated");
     return req.go(throwOnErr: true).map(decodeOne);

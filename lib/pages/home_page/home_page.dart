@@ -2,12 +2,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_movie_db/data/model/media.dart';
+import 'package:flutter_movie_db/data/model/media_category.dart';
 import 'package:flutter_movie_db/data/repository/base_service.dart';
 import 'package:flutter_movie_db/pages/home_page/bloc.dart';
+import 'package:flutter_movie_db/pages/more_page/more_page.dart';
 import 'package:flutter_movie_db/ui/PlatformAppBar.dart';
 import 'package:flutter_movie_db/ui/home_page_banner.dart';
 import 'package:flutter_movie_db/ui/media_carousel.dart';
 import 'package:provider/provider.dart';
+
+import '../details_page/details_page.dart';
 
 class HomePage extends StatefulWidget {
   final HomePageBloc bloc;
@@ -34,6 +39,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  ValueChanged get onClick => (media) => _navigateToDetailsPage(media);
+
+  ValueChanged get onMoreClickListener => (category) => _navigateToMorePage(category);
+
   @override
   void initState() {
     super.initState();
@@ -64,6 +74,7 @@ class _HomePageState extends State<HomePage> {
         .size;
 
     return Container(
+      color: Colors.white,
       padding: EdgeInsets.all(16),
       height: size.height,
       width: size.width,
@@ -72,6 +83,7 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             _buildNowPlayingBanner(),
             _buildTopRatedCarousel(),
+            _buildPopularMoviesCarousel(),
             _buildTvCarousel()
           ],
         ),
@@ -84,7 +96,20 @@ class _HomePageState extends State<HomePage> {
       condition: (lastState, newState) => newState is TvLoaded,
       builder: (context, state) {
         if (state is TvLoaded) {
-          return MediaCarousel(models: state.models,);
+          return MediaCarousel(models: state.models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.TvShows),);
+        }
+        return SizedBox.shrink();
+      },
+    );
+  }
+
+
+  BlocBuilder<HomePageBloc, HomePageState> _buildPopularMoviesCarousel() {
+    return BlocBuilder<HomePageBloc, HomePageState>(
+      condition: (lastState, newState) => newState is PopularMoviesLoaded,
+      builder: (context, state) {
+        if (state is PopularMoviesLoaded) {
+          return MediaCarousel(models: state.models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.Popular),);
         }
         return SizedBox.shrink();
       },
@@ -97,7 +122,7 @@ class _HomePageState extends State<HomePage> {
       condition: (lastState, newState) => newState is TopRatedLoaded,
       builder: (context, state) {
         if (state is TopRatedLoaded) {
-          return MediaCarousel(models: state.models,);
+          return MediaCarousel(models: state.models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.TopRated),);
         }
         return SizedBox.shrink();
       },
@@ -109,10 +134,19 @@ class _HomePageState extends State<HomePage> {
       condition: (lastState, newState) => newState is NowPlayingLoaded,
       builder: (context, state) {
         if (state is NowPlayingLoaded) {
-          return HomePageBanner(models: state.models,);
+          return HomePageBanner(models: state.models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.NowPlaying),);
         }
         return SizedBox.shrink();
       },
     );
   }
+
+  void _navigateToDetailsPage(Media media) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => DetailsPage(media: media,)));
+  }
+
+  void _navigateToMorePage(MediaCategory category) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => MorePage.create(category), maintainState: true, settings: RouteSettings()));
+  }
+
 }

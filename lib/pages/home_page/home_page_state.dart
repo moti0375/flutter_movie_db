@@ -30,6 +30,15 @@ class TopRatedLoaded extends HomePageState {
   List<Object> get props => [models];
 }
 
+class PopularMoviesLoaded extends HomePageState {
+  final MediaModels models;
+
+  PopularMoviesLoaded(this.models);
+
+  @override
+  List<Object> get props => [models];
+}
+
 class TvLoaded extends HomePageState {
   final MediaModels models;
 

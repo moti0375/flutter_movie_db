@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_movie_db/data/model/media.dart';
+import 'package:flutter_movie_db/data/model/media_category.dart';
 import 'package:flutter_movie_db/data/model/media_models.dart';
 import 'package:flutter_movie_db/data/repository/base_service.dart';
 import 'package:flutter_movie_db/network/base_http_client.dart';
@@ -173,5 +174,45 @@ class TmdbRepository implements BaseRepository {
 
     print("getTopRatedMedias: got ${items.length} items");
     return items;
+  }
+
+  @override
+  Future<List<Media>> getPopularMovies() async {
+    print("getPopularMovies: called ");
+    ApiResponse eventStream =
+    await client.getPopularMovies().catchError((error) {
+      print("Error: ${error.toString()}");
+    });
+
+    print("getPopularMovies: done ");
+
+    return eventStream.results.map((movie) {
+      return Media(
+          id: movie.id,
+          title: movie.title,
+          vote_count: movie.vote_count,
+          overview: movie.overview,
+          poster_path: movie.poster_path,
+          vote_average: movie.vote_average,
+          backdrop_path: movie.backdrop_path,
+          release_date: movie.release_date,
+          genres: movie.genres,
+          type: MediaType.movie);
+    }).toList();
+  }
+
+  @override
+  Future<List<Media>> getMediaByCategory(MediaCategory category) {
+    switch (category) {
+      case MediaCategory.NowPlaying:
+        return getNowPlaying();
+      case MediaCategory.TopRated:
+        return getTopRatedMovies();
+      case MediaCategory.Popular:
+        return getPopularMovies();
+      case MediaCategory.TvShows:
+        return getTopRatedTv();
+    }
+    throw Exception();
   }
 }
