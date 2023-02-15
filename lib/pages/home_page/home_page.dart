@@ -56,6 +56,7 @@ class _HomePageState extends State<HomePage> {
       left: false,
       right: false,
       top: false,
+      bottom: false,
       child: Scaffold(
         appBar: _buildAppBar(context),
         body: _buildContent(),
@@ -146,6 +147,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _navigateToMorePage(MediaCategory category) {
+    print("_navigateToMorePage: category: $category");
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => MorePage.create(category), maintainState: true, settings: RouteSettings()));
   }
 

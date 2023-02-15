@@ -14,6 +14,7 @@ class DetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("build: $media");
     return Scaffold(
       backgroundColor: Colors.grey[400],
       appBar: PlatformAppBar(
@@ -106,9 +107,9 @@ class DetailsPage extends StatelessWidget {
                 Expanded(
                   flex: 1,
                   child: Text(
-                    media.type == MediaType.tv ? media.genres.map((genre){
+                    media.type == MediaType.tv ? media.genres?.map((genre){
                       return genre.name;
-                    }).toList().join(', ') :
+                    })?.toList()?.join(', ') ?? "Genre":
                     "${media.runtime}Min",
                     textAlign: TextAlign.center,
                     softWrap: true,

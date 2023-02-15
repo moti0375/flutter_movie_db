@@ -19,7 +19,7 @@ class MorePageBloc extends Bloc<MorePageEvent, MorePageState> {
   @override
   Stream<MorePageState> mapEventToState(MorePageEvent event) async* {
     print("mapEventToState: $event, $_category");
-    if (event is LoadMore) {
+    if (event is LoadMoreEvent) {
       print("mapEventToState: $event");
       yield* _loadMedias();
     }

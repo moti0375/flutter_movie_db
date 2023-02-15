@@ -53,9 +53,9 @@ class TmdbRepository implements BaseRepository {
     print("getNowPlaying: called ");
     ApiResponse eventStream =
     await client.getNowPlayingMovies().catchError((error) {
-      print("Error: ${error.toString()}");
+      print("Something went wrong: ${error.toString()}");
     });
-    print("getNowPlaying: done ");
+    print("getNowPlaying: done $eventStream");
     return eventStream.results.map((movie) {
       return Media(
           id: movie.id,
@@ -92,6 +92,8 @@ class TmdbRepository implements BaseRepository {
 
   @override
   Future<Media> getMediaDetails(MediaType type, String id) async {
+    print("getMediaDetails: type $type, id: $id");
+
     DetailsResponse response = await client
         .getMediaDetails(type.toString().split(".").last, id)
         .catchError((error) {

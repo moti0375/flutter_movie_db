@@ -34,7 +34,7 @@ class _MorePageState extends State<MorePage> {
   @override
   void initState() {
     super.initState();
-    widget.bloc.add(LoadMore());
+    widget.bloc.add(LoadMoreEvent());
   }
 
   @override

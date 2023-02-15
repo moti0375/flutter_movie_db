@@ -7,4 +7,4 @@ abstract class MorePageEvent extends Equatable {
   List<Object> get props => const [];
 }
 
-class LoadMore extends MorePageEvent {}
+class LoadMoreEvent extends MorePageEvent {}

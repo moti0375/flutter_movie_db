@@ -24,7 +24,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   transparent_image: ^1.0.0
-  http: ^0.12.0+1
+  http: ^0.12.2
   jaguar_retrofit: ^2.8.6
   flutter_bloc: ^4.0.1
   get_it: ^4.0.2
