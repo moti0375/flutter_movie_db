@@ -1,14 +1,12 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_movie_db/bloc_cubit/base_state/base_bloc_state.dart';
 import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/model/media_category.dart';
 import 'package:flutter_movie_db/data/repository/base_service.dart';
 import 'package:flutter_movie_db/pages/home_page/bloc.dart';
 import 'package:flutter_movie_db/pages/more_page/more_page.dart';
 import 'package:flutter_movie_db/ui/PlatformAppBar.dart';
-import 'package:flutter_movie_db/ui/home_page_banner.dart';
 import 'package:flutter_movie_db/ui/media_carousel.dart';
 import 'package:provider/provider.dart';
 
@@ -47,7 +45,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    widget.bloc.add(LoadMovies());
+    widget.bloc.loadMovies();
   }
 
   @override
@@ -92,59 +90,53 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  BlocBuilder<HomePageBloc, HomePageState> _buildTvCarousel() {
-    return BlocBuilder<HomePageBloc, HomePageState>(
-      buildWhen: (lastState, newState) => newState is TvLoaded,
-      builder: (context, state) {
-        print("Bloc Builder: $state");
-        if(state is LoadingMovies){
-          return Container(child: CircularProgressIndicator(),);
-        }
-        if (state is TvLoaded) {
-          return MediaCarousel(models: state.models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.TvShows),);
-        }
-
-        return SizedBox.shrink();
-      },
-    );
+  Widget _buildTvCarousel() {
+    return BlocBuilder<HomePageBloc, BaseBlocState<HomePageState>>(
+      buildWhen: (lastState, newState) => newState.whenOrNull(next: (data) => data.whenOrNull(tvLoaded: (data) => true)) != null,
+      builder: (context, baseState) =>
+          baseState.when(
+            init: () => SizedBox.shrink(),
+            loading: () => Container(child: CircularProgressIndicator(),),
+            next: (pageState) => pageState.whenOrNull(
+                tvLoaded: (models) => MediaCarousel(models: models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.TvShows),)) ?? SizedBox.shrink(),
+            error: (e) => SizedBox()));
   }
 
 
-  BlocBuilder<HomePageBloc, HomePageState> _buildPopularMoviesCarousel() {
-    return BlocBuilder<HomePageBloc, HomePageState>(
-      buildWhen: (lastState, newState) => newState is PopularMoviesLoaded,
-      builder: (context, state) {
-        if (state is PopularMoviesLoaded) {
-          return MediaCarousel(models: state.models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.Popular),);
-        }
-        return SizedBox.shrink();
-      },
-    );
+  Widget _buildPopularMoviesCarousel() {
+    return BlocBuilder<HomePageBloc, BaseBlocState<HomePageState>>(
+        buildWhen: (lastState, newState) => newState.whenOrNull(next: (data) => data.whenOrNull(popularMoviesLoaded: (data) => true)) != null,
+        builder: (context, baseState) =>
+            baseState.when(
+                init: () => SizedBox.shrink(),
+                loading: () => Container(child: CircularProgressIndicator(),),
+                next: (pageState) => pageState.whenOrNull(
+                    popularMoviesLoaded: (models) => MediaCarousel(models: models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.Popular),)) ?? SizedBox.shrink(),
+                error: (e) => SizedBox()));
   }
 
-
-  BlocBuilder<HomePageBloc, HomePageState> _buildTopRatedCarousel() {
-    return BlocBuilder<HomePageBloc, HomePageState>(
-      buildWhen: (lastState, newState) => newState is TopRatedLoaded,
-      builder: (context, state) {
-        if (state is TopRatedLoaded) {
-          return MediaCarousel(models: state.models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.TopRated),);
-        }
-        return SizedBox.shrink();
-      },
-    );
+  Widget _buildTopRatedCarousel() {
+    return BlocBuilder<HomePageBloc, BaseBlocState<HomePageState>>(
+        buildWhen: (lastState, newState) => newState.whenOrNull(next: (data) => data.whenOrNull(topRatedLoaded: (data) => true)) != null,
+        builder: (context, baseState) =>
+            baseState.when(
+                init: () => SizedBox.shrink(),
+                loading: () => Container(child: CircularProgressIndicator(),),
+                next: (pageState) => pageState.whenOrNull(
+                    topRatedLoaded: (models) => MediaCarousel(models: models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.TopRated),)) ?? SizedBox.shrink(),
+                error: (e) => SizedBox()));
   }
 
-  BlocBuilder<HomePageBloc, HomePageState> _buildNowPlayingBanner() {
-    return BlocBuilder<HomePageBloc, HomePageState>(
-      buildWhen: (lastState, newState) => newState is NowPlayingLoaded,
-      builder: (context, state) {
-        if (state is NowPlayingLoaded) {
-          return HomePageBanner(models: state.models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.NowPlaying),);
-        }
-        return SizedBox.shrink();
-      },
-    );
+  Widget _buildNowPlayingBanner() {
+    return BlocBuilder<HomePageBloc, BaseBlocState<HomePageState>>(
+        buildWhen: (lastState, newState) => newState.whenOrNull(next: (data) => data.whenOrNull(nowPlayingLoaded: (data) => true)) != null,
+        builder: (context, baseState) =>
+            baseState.when(
+                init: () => SizedBox.shrink(),
+                loading: () => Container(child: CircularProgressIndicator(),),
+                next: (pageState) => pageState.whenOrNull(
+                    nowPlayingLoaded: (models) => MediaCarousel(models: models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.NowPlaying),)) ?? SizedBox.shrink(),
+                error: (e) => SizedBox()));
   }
 
   void _navigateToDetailsPage(Media media) {

@@ -1,59 +1,45 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter_movie_db/bloc_cubit/base_cubit.dart';
+import 'package:flutter_movie_db/bloc_cubit/base_state/base_bloc_state.dart';
 import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/model/media_models.dart';
 import 'package:flutter_movie_db/data/repository/base_service.dart';
 
 import './bloc.dart';
 
-class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
+class HomePageBloc extends BaseCubit<HomePageState> {
   final Repository _repository;
 
-  HomePageBloc(this._repository) : super(InitialHomePageState()) {
-    on<LoadMovies>((event, emit) async {
-      emit(LoadingMovies());
-       add(LoadNowPlaying());
-       add(LoadTopRated());
-       add(LoadMostPopular());
-       add(LoadTv());
-    });
-    on<LoadNowPlaying>((event, emit) async {
-      await _loadNowPlaying(emit);
-    });
+  HomePageBloc(this._repository) : super(BaseBlocState.init()) ;
 
-    on<LoadTopRated>((event, emit) async {
-      await _loadTopRated(emit);
-    });
-
-    on<LoadTv>((event, emit) async {
-      await _loadTv(emit);
-    });
-
-    on<LoadMostPopular>((event, emit) async {
-      await _loadPopular(emit);
-    });
+  void loadMovies() async {
+    emit(BaseBlocState.loading());
+    _loadNowPlaying();
+    _loadPopular();
+    _loadTopRated();
+    _loadTv();
   }
 
-  Future _loadNowPlaying(Emitter<HomePageState> emit) async {
+  void _loadNowPlaying() async {
       List<Media> nowPlaying = await _repository.getNowPlaying();
       print("HomePageBloc: nowPlaying ${nowPlaying.toString()}");
-      emit(NowPlayingLoaded(MediaModels(title: "Now Playing", items: nowPlaying)));
+      emit(BaseBlocState.next(HomePageState.nowPlayingLoaded(nowPlyaing: MediaModels(title: "Now Playing", items: nowPlaying))));
   }
 
-  Future _loadPopular(Emitter<HomePageState> emit) async {
+  Future _loadPopular() async {
       List<Media> popularMovies = await _repository.getPopularMovies();
-      emit(PopularMoviesLoaded(MediaModels(title: "Popular Movies", items: popularMovies)));
+      emit(BaseBlocState.next(HomePageState.popularMoviesLoaded(popular: MediaModels(title: "Popular Movies", items: popularMovies))));
   }
 
 
-  Future _loadTopRated(Emitter<HomePageState> emit) async {
+  Future _loadTopRated() async {
     List<Media> topRated = await _repository.getTopRatedMovies();
-    emit(TopRatedLoaded(MediaModels(title: "Top Rated", items: topRated)));
+    emit(BaseBlocState.next(HomePageState.topRatedLoaded(topRated: MediaModels(title: "Top Rated", items: topRated))));
   }
 
-  Future _loadTv(Emitter<HomePageState> emit) async {
+  Future _loadTv() async {
     List<Media> tvShows = await _repository.getTopRatedTv();
-    emit(TvLoaded(MediaModels(title: "Top Rated TV", items: tvShows)));
+    emit(BaseBlocState.next(HomePageState.tvLoaded(tv: MediaModels(title: "Top Rated TV", items: tvShows))));
   }
 }
