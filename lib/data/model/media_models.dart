@@ -4,5 +4,5 @@ class MediaModels{
   String title;
   List<Media> items;
 
-  MediaModels({this.items, this.title});
+  MediaModels({required this.items, required this.title});
 }

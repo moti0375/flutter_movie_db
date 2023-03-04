@@ -8,36 +8,52 @@ import 'package:flutter_movie_db/data/repository/base_service.dart';
 import './bloc.dart';
 
 class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
-  final BaseRepository _repository;
+  final Repository _repository;
 
-  HomePageBloc(this._repository);
+  HomePageBloc(this._repository) : super(InitialHomePageState()) {
+    on<LoadMovies>((event, emit) async {
+      emit(LoadingMovies());
+       add(LoadNowPlaying());
+       add(LoadTopRated());
+       add(LoadMostPopular());
+       add(LoadTv());
+    });
+    on<LoadNowPlaying>((event, emit) async {
+      await _loadNowPlaying(emit);
+    });
 
-  @override
-  HomePageState get initialState => InitialHomePageState();
+    on<LoadTopRated>((event, emit) async {
+      await _loadTopRated(emit);
+    });
 
-  @override
-  Stream<HomePageState> mapEventToState(HomePageEvent event) async* {
-    if (event is LoadMovies) {
-      yield* _loadMoviesFromApi();
-    }
+    on<LoadTv>((event, emit) async {
+      await _loadTv(emit);
+    });
+
+    on<LoadMostPopular>((event, emit) async {
+      await _loadPopular(emit);
+    });
   }
 
-  Stream<HomePageState> _loadMoviesFromApi() async* {
-    yield LoadingMovies();
-    try {
+  Future _loadNowPlaying(Emitter<HomePageState> emit) async {
       List<Media> nowPlaying = await _repository.getNowPlaying();
-      print("_loadMoviesFromApi: nowPlaying ${nowPlaying.toString()}");
-      yield NowPlayingLoaded(MediaModels(title: "Now Playing", items: nowPlaying));
-      List<Media> topRated = await _repository.getTopRatedMovies();
-      yield TopRatedLoaded(MediaModels(title: "Top Rated", items: topRated));
+      print("HomePageBloc: nowPlaying ${nowPlaying.toString()}");
+      emit(NowPlayingLoaded(MediaModels(title: "Now Playing", items: nowPlaying)));
+  }
 
+  Future _loadPopular(Emitter<HomePageState> emit) async {
       List<Media> popularMovies = await _repository.getPopularMovies();
-      yield PopularMoviesLoaded(MediaModels(title: "Popular Movies", items: popularMovies));
+      emit(PopularMoviesLoaded(MediaModels(title: "Popular Movies", items: popularMovies)));
+  }
 
-      List<Media> tvShows = await _repository.getTopRatedTv();
-      yield TvLoaded(MediaModels(title: "Top Rated TV", items: tvShows));
-    } catch (e, stacktrace) {
-      print("There was an error: ${stacktrace.toString()}");
-    }
+
+  Future _loadTopRated(Emitter<HomePageState> emit) async {
+    List<Media> topRated = await _repository.getTopRatedMovies();
+    emit(TopRatedLoaded(MediaModels(title: "Top Rated", items: topRated)));
+  }
+
+  Future _loadTv(Emitter<HomePageState> emit) async {
+    List<Media> tvShows = await _repository.getTopRatedTv();
+    emit(TvLoaded(MediaModels(title: "Top Rated TV", items: tvShows)));
   }
 }

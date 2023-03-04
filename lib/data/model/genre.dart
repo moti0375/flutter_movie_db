@@ -3,12 +3,12 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'genre.g.dart';
 
-@JsonSerializable(nullable: true)
+@JsonSerializable()
 class Genre extends Equatable {
   final int id;
   final String name;
 
-  Genre({this.id, this.name});
+  Genre({required this.id, required this.name});
 
 
   @override

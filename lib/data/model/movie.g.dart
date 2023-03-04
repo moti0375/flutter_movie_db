@@ -6,27 +6,25 @@ part of 'movie.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Movie _$MovieFromJson(Map<String, dynamic> json) {
-  return Movie()
-    ..vote_count = json['vote_count'] as int
-    ..id = json['id'] as int
-    ..vote_average = (json['vote_average'] as num)?.toDouble()
-    ..title = json['title'] as String
-    ..name = json['name'] as String
-    ..popularity = (json['popularity'] as num)?.toDouble()
-    ..poster_path = json['poster_path'] as String
-    ..original_language = json['original_language'] as String
-    ..original_title = json['original_title'] as String
-    ..backdrop_path = json['backdrop_path'] as String
-    ..adult = json['adult'] as bool
-    ..overview = json['overview'] as String
-    ..release_date = json['release_date'] as String
-    ..first_air_date = json['first_air_date'] as String
-    ..genres = (json['genres'] as List)
-        ?.map(
-            (e) => e == null ? null : Genre.fromJson(e as Map<String, dynamic>))
-        ?.toList();
-}
+Movie _$MovieFromJson(Map<String, dynamic> json) => Movie(
+      id: json['id'] as int,
+      title: json['title'] as String,
+      name: json['name'] as String?,
+      overview: json['overview'] as String,
+      vote_count: json['vote_count'] as int,
+      poster_path: json['poster_path'] as String,
+      vote_average: (json['vote_average'] as num).toDouble(),
+      release_date: json['release_date'] as String,
+      first_air_date: json['first_air_date'] as String?,
+    )
+      ..popularity = (json['popularity'] as num?)?.toDouble()
+      ..original_language = json['original_language'] as String?
+      ..original_title = json['original_title'] as String?
+      ..backdrop_path = json['backdrop_path'] as String?
+      ..adult = json['adult'] as bool?
+      ..genres = (json['genres'] as List<dynamic>?)
+          ?.map((e) => Genre.fromJson(e as Map<String, dynamic>))
+          .toList();
 
 Map<String, dynamic> _$MovieToJson(Movie instance) => <String, dynamic>{
       'vote_count': instance.vote_count,
@@ -43,5 +41,5 @@ Map<String, dynamic> _$MovieToJson(Movie instance) => <String, dynamic>{
       'overview': instance.overview,
       'release_date': instance.release_date,
       'first_air_date': instance.first_air_date,
-      'genres': instance.genres
+      'genres': instance.genres,
     };

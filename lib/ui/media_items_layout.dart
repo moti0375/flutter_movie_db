@@ -5,7 +5,7 @@ import 'package:flutter_movie_db/data/model/media_models.dart';
 import 'image_item.dart';
 
 class MediaItemsLayout extends StatelessWidget {
-  MediaItemsLayout({this.medias, this.title, this.onItemClick}) {
+  MediaItemsLayout({required this.medias, required this.title, required this.onItemClick}) {
     print("MediaItemsLayout: $title");
   }
 

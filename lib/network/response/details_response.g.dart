@@ -6,31 +6,34 @@ part of 'details_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-DetailsResponse _$DetailsResponseFromJson(Map<String, dynamic> json) {
-  return DetailsResponse()
-    ..adult = json['adult'] as bool
-    ..backdrop_path = json['backdrop_path'] as String
-    ..budget = json['budget'] as int
-    ..homepage = json['homepage'] as String
-    ..id = json['id'] as int
-    ..original_title = json['original_title'] as String
-    ..overview = json['overview'] as String
-    ..poster_path = json['poster_path'] as String
-    ..release_date = json['release_date'] as String
-    ..first_air_date = json['first_air_date'] as String
-    ..revenue = json['revenue'] as int
-    ..runtime = json['runtime'] as int
-    ..status = json['status'] as String
-    ..title = json['title'] as String
-    ..name = json['name'] as String
-    ..tagline = json['tagline'] as String
-    ..vote_average = (json['vote_average'] as num)?.toDouble()
-    ..popularity = (json['popularity'] as num)?.toDouble()
-    ..vote_count = json['vote_count'] as int
-    ..genres = (json['genres'] as List)?.map((e) => e == null ? null : Genre.fromJson(e as Map<String, dynamic>))?.toList();
-}
+DetailsResponse _$DetailsResponseFromJson(Map<String, dynamic> json) =>
+    DetailsResponse(
+      id: json['id'] as int,
+      title: json['title'] as String,
+      name: json['name'] as String,
+      overview: json['overview'] as String,
+      original_title: json['original_title'] as String,
+      release_date: json['release_date'] as String,
+      poster_path: json['poster_path'] as String,
+      vote_average: (json['vote_average'] as num).toDouble(),
+      vote_count: json['vote_count'] as int,
+      first_air_date: json['first_air_date'] as String,
+      popularity: (json['popularity'] as num).toDouble(),
+    )
+      ..adult = json['adult'] as bool?
+      ..backdrop_path = json['backdrop_path'] as String?
+      ..budget = json['budget'] as int?
+      ..homepage = json['homepage'] as String?
+      ..revenue = json['revenue'] as int?
+      ..runtime = json['runtime'] as int?
+      ..status = json['status'] as String?
+      ..tagline = json['tagline'] as String?
+      ..genres = (json['genres'] as List<dynamic>?)
+          ?.map((e) => Genre.fromJson(e as Map<String, dynamic>))
+          .toList();
 
-Map<String, dynamic> _$DetailsResponseToJson(DetailsResponse instance) => <String, dynamic>{
+Map<String, dynamic> _$DetailsResponseToJson(DetailsResponse instance) =>
+    <String, dynamic>{
       'adult': instance.adult,
       'backdrop_path': instance.backdrop_path,
       'budget': instance.budget,
@@ -50,5 +53,5 @@ Map<String, dynamic> _$DetailsResponseToJson(DetailsResponse instance) => <Strin
       'vote_average': instance.vote_average,
       'popularity': instance.popularity,
       'vote_count': instance.vote_count,
-      'genres': instance.genres
+      'genres': instance.genres,
     };

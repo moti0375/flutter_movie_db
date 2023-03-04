@@ -1,28 +1,37 @@
 import 'package:flutter_movie_db/data/model/genre.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 part 'movie.g.dart';
 
+@JsonSerializable(includeIfNull: true)
+class Movie {
+  Movie({
+    required this.id,
+    required this.title,
+    required this.name,
+    required this.overview,
+    required this.vote_count,
+    required this.poster_path,
+    required this.vote_average,
+    required this.release_date,
+    this.first_air_date
+  });
 
-@JsonSerializable(nullable: true)
-class Movie{
-
-  Movie();
   int vote_count;
   int id;
   double vote_average;
   String title;
-  String name;
-  double popularity;
+  String? name;
+  double? popularity;
   String poster_path;
-  String original_language;
-  String original_title;
-  String backdrop_path;
-  bool adult;
+  String? original_language;
+  String? original_title;
+  String? backdrop_path;
+  bool? adult;
   String overview;
   String release_date;
-  String first_air_date;
-  List<Genre> genres;
-
+  String? first_air_date;
+  List<Genre>? genres;
 
   @override
   String toString() {
@@ -30,6 +39,6 @@ class Movie{
   }
 
   factory Movie.fromJson(Map<String, dynamic> json) => _$MovieFromJson(json);
-  Map<String, dynamic> toJson() => _$MovieToJson(this);
 
+  Map<String, dynamic> toJson() => _$MovieToJson(this);
 }

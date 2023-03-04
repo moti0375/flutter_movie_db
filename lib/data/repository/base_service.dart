@@ -1,14 +1,13 @@
 import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/model/media_category.dart';
 import 'package:flutter_movie_db/data/model/media_models.dart';
-import 'package:flutter_movie_db/network/response/details_response.dart';
 
 
-abstract class BaseRepository {
+abstract class Repository {
   Future<List<Media>> getTopRatedMovies();
 
-  Future<DetailsResponse> getMovieDetails(String id);
-
+  // Future<DetailsResponse> getMovieDetails(String id);
+  //
   Future<List<Media>> getNowPlaying();
 
   Future<List<Media>> getPopularMovies();

@@ -4,7 +4,7 @@ import 'package:flutter_movie_db/data/repository/tmdb_repository.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class MediaGridLayout extends StatelessWidget {
-  MediaGridLayout({this.items, this.onItemClick}) {
+  MediaGridLayout({required this.items, required this.onItemClick}) {
     print("MediaGridLayout: ${this.items.length}");
   }
 

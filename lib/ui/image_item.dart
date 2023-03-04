@@ -4,7 +4,7 @@ import 'package:flutter_movie_db/data/repository/tmdb_repository.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class ImageItem extends StatelessWidget {
-  ImageItem({this.callback, this.movie});
+  ImageItem({required this.callback, required this.movie});
 
   final VoidCallback callback;
   final Media movie;
@@ -68,7 +68,7 @@ class ImageItem extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(left: 5, bottom: 5),
                           child: Text(
-                            movie.release_date,
+                            movie.release_date ?? "",
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Colors.white,

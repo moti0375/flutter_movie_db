@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RatingWidget extends StatelessWidget {
-  RatingWidget({this.rating, this.totalVoting});
+  RatingWidget({required this.rating, required this.totalVoting});
 
   final double rating;
   final int totalVoting;
@@ -51,7 +51,6 @@ class RatingWidget extends StatelessWidget {
   }
 
   Icon _getIconFromRating(double rating) {
-    print("_getIconFromRating: $rating");
     if (rating >= 1) {
       return Icon(
         Icons.star,

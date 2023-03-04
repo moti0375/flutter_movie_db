@@ -9,7 +9,12 @@ class MediaCarousel extends StatelessWidget {
   final ValueChanged<Media> onClickListener;
   final VoidCallback onMoreClickListener;
 
-  const MediaCarousel({Key key, this.models, this.onClickListener, this.onMoreClickListener}) : super(key: key);
+  const MediaCarousel({
+    Key? key,
+    required this.models,
+    required this.onClickListener,
+    required this.onMoreClickListener,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +59,7 @@ class MediaCarousel extends StatelessWidget {
   }
 
   Widget _buildMediaCell(Media media, BuildContext context) {
+    print("MediaCarousel: ${media.id}");
     return Container(
       width: MediaQuery.of(context).size.width / 2,
       margin: EdgeInsets.all(10.0),
@@ -70,7 +76,7 @@ class MediaCarousel extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    '${DateTime.parse(media.release_date).year}',
+              media.release_date != null ?'${DateTime.parse(media.release_date!).year}' : "",
                     style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600, letterSpacing: 1.2),
                   ),
                   Text(
@@ -103,14 +109,8 @@ class MediaCarousel extends StatelessWidget {
                       child: Hero(
                         tag: media.id,
                         child: FadeInImage.memoryNetwork(
-                          width: (MediaQuery
-                              .of(context)
-                              .size
-                              .width / 2),
-                          height: (MediaQuery
-                              .of(context)
-                              .size
-                              .width / 2),
+                          width: (MediaQuery.of(context).size.width / 2),
+                          height: (MediaQuery.of(context).size.width / 2),
                           placeholder: kTransparentImage,
                           image: TmdbRepository.buildImageUrl(media.poster_path),
                           fit: BoxFit.fill,
@@ -120,14 +120,8 @@ class MediaCarousel extends StatelessWidget {
                     ),
                     Container(
                       padding: EdgeInsets.only(bottom: 8, left: 8),
-                      width: (MediaQuery
-                          .of(context)
-                          .size
-                          .width / 2),
-                      height: (MediaQuery
-                          .of(context)
-                          .size
-                          .width / 2),
+                      width: (MediaQuery.of(context).size.width / 2),
+                      height: (MediaQuery.of(context).size.width / 2),
                       alignment: Alignment.bottomLeft,
                       child: Text(
                         media.title,
@@ -135,7 +129,10 @@ class MediaCarousel extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                          gradient: LinearGradient(colors: [Colors.transparent, Colors.black87], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+                          gradient: LinearGradient(
+                              colors: [Colors.transparent, Colors.black87],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter)),
                     ),
                   ],
                 ),

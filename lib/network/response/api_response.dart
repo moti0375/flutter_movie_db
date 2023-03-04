@@ -2,12 +2,10 @@ import 'package:flutter_movie_db/data/model/movie.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'api_response.g.dart';
 
-@JsonSerializable(nullable: true, includeIfNull: true)
+@JsonSerializable()
 class ApiResponse{
-  ApiResponse({this.results});
-  int page;
-  int total_results;
-  int total_pages;
+  ApiResponse({required this.results});
+  int? page, total_results, total_pages;
   List<Movie> results;
 
 

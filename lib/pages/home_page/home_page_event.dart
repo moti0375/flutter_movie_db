@@ -8,3 +8,8 @@ abstract class HomePageEvent extends Equatable {
 }
 
 class LoadMovies extends HomePageEvent {}
+class LoadNowPlaying extends HomePageEvent {}
+class LoadTopRated extends HomePageEvent {}
+class LoadMostPopular extends HomePageEvent {}
+class LoadTv extends HomePageEvent {}
+

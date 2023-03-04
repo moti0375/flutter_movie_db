@@ -5,7 +5,7 @@ import 'package:flutter_movie_db/ui/PlatformWidget.dart';
 
 class PlatformAppBar extends PlatformWidget<CupertinoNavigationBar, AppBar> {
 
-  PlatformAppBar({this.title});
+  PlatformAppBar({required this.title});
 
   final Widget title;
 

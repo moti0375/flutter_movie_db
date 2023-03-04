@@ -15,7 +15,7 @@ class LoadingMore extends MorePageState {}
 class MediaLoaded extends MorePageState {
   final List<Media> items;
 
-  MediaLoaded({this.items});
+  MediaLoaded({required this.items});
 
   @override
   List<Object> get props => [items];

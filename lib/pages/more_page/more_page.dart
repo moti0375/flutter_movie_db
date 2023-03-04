@@ -11,13 +11,13 @@ import 'package:provider/provider.dart';
 class MorePage extends StatefulWidget {
   final MorePageBloc bloc;
 
-  const MorePage({Key key, this.bloc}) : super(key: key);
+  const MorePage({Key? key, required this.bloc}) : super(key: key);
 
   @override
   _MorePageState createState() => _MorePageState();
 
   static Widget create(MediaCategory category) {
-    return Consumer<BaseRepository>(
+    return Consumer<Repository>(
       builder: (c, repo, __) => BlocProvider<MorePageBloc>(
         create: (c) => MorePageBloc(repo, category),
         child: Consumer<MorePageBloc>(

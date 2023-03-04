@@ -9,7 +9,7 @@ class HomePageBanner extends StatelessWidget {
   final ValueChanged<Media> onClickListener;
   final VoidCallback onMoreClickListener;
 
-  const HomePageBanner({Key key, this.models, this.onClickListener, this.onMoreClickListener}) : super(key: key);
+  const HomePageBanner({Key? key, required this.models, required this.onClickListener, required this.onMoreClickListener}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +18,7 @@ class HomePageBanner extends StatelessWidget {
     PageController controller = PageController(viewportFraction: 0.9, initialPage: 0);
 
     List<Widget> _buildBannerItems() {
+      print("HomePageBanner: ${models.items.first.id}");
       return models.items
           .map<Widget>((e) => Padding(
                 padding: const EdgeInsets.all(8.0),

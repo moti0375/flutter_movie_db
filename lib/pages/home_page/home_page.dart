@@ -17,13 +17,13 @@ import '../details_page/details_page.dart';
 class HomePage extends StatefulWidget {
   final HomePageBloc bloc;
 
-  const HomePage({Key key, this.bloc}) : super(key: key);
+  const HomePage({Key? key, required this.bloc}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 
   static Widget create(BuildContext rootContext) {
-    return Consumer<BaseRepository>(
+    return Consumer<Repository>(
       builder: (_, baseRepository, __) =>
           BlocProvider<HomePageBloc>(
             create: (_) => HomePageBloc(baseRepository),
@@ -94,11 +94,16 @@ class _HomePageState extends State<HomePage> {
 
   BlocBuilder<HomePageBloc, HomePageState> _buildTvCarousel() {
     return BlocBuilder<HomePageBloc, HomePageState>(
-      condition: (lastState, newState) => newState is TvLoaded,
+      buildWhen: (lastState, newState) => newState is TvLoaded,
       builder: (context, state) {
+        print("Bloc Builder: $state");
+        if(state is LoadingMovies){
+          return Container(child: CircularProgressIndicator(),);
+        }
         if (state is TvLoaded) {
           return MediaCarousel(models: state.models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.TvShows),);
         }
+
         return SizedBox.shrink();
       },
     );
@@ -107,7 +112,7 @@ class _HomePageState extends State<HomePage> {
 
   BlocBuilder<HomePageBloc, HomePageState> _buildPopularMoviesCarousel() {
     return BlocBuilder<HomePageBloc, HomePageState>(
-      condition: (lastState, newState) => newState is PopularMoviesLoaded,
+      buildWhen: (lastState, newState) => newState is PopularMoviesLoaded,
       builder: (context, state) {
         if (state is PopularMoviesLoaded) {
           return MediaCarousel(models: state.models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.Popular),);
@@ -120,7 +125,7 @@ class _HomePageState extends State<HomePage> {
 
   BlocBuilder<HomePageBloc, HomePageState> _buildTopRatedCarousel() {
     return BlocBuilder<HomePageBloc, HomePageState>(
-      condition: (lastState, newState) => newState is TopRatedLoaded,
+      buildWhen: (lastState, newState) => newState is TopRatedLoaded,
       builder: (context, state) {
         if (state is TopRatedLoaded) {
           return MediaCarousel(models: state.models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.TopRated),);
@@ -132,7 +137,7 @@ class _HomePageState extends State<HomePage> {
 
   BlocBuilder<HomePageBloc, HomePageState> _buildNowPlayingBanner() {
     return BlocBuilder<HomePageBloc, HomePageState>(
-      condition: (lastState, newState) => newState is NowPlayingLoaded,
+      buildWhen: (lastState, newState) => newState is NowPlayingLoaded,
       builder: (context, state) {
         if (state is NowPlayingLoaded) {
           return HomePageBanner(models: state.models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.NowPlaying),);

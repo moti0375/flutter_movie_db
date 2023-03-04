@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_db/data/model/media.dart';
+import 'package:flutter_movie_db/data/repository/base_service.dart';
 import 'package:flutter_movie_db/data/repository/tmdb_repository.dart';
 import 'package:flutter_movie_db/ui/PlatformAppBar.dart';
 import 'package:flutter_movie_db/ui/rating_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class DetailsPage extends StatelessWidget {
-  DetailsPage({@required this.media});
+  DetailsPage({required this.media});
 
   final Media media;
   final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
@@ -20,7 +22,16 @@ class DetailsPage extends StatelessWidget {
       appBar: PlatformAppBar(
         title: Text(media.title),
       ).build(context),
-      body: _buildContent(media, context),
+      body: FutureBuilder<Media>(
+        future: Provider.of<Repository>(context).getMediaDetails(media.type, media.id.toString()),
+        builder: (context, snapshot) {
+          if(snapshot.hasData){
+            return _buildContent(snapshot.requireData, context);
+          } else {
+            return Container();
+          }
+        },
+      ),
     );
   }
 
@@ -94,7 +105,7 @@ class DetailsPage extends StatelessWidget {
                 Expanded(
                   flex: 1,
                   child: Text(
-                    "${dateFormat.parse(media.release_date).year}",
+                      media.release_date != null ? "${dateFormat.parse(media.release_date!).year}" : "",
                     textAlign: TextAlign.center,
                     softWrap: true,
                     style: TextStyle(
@@ -109,7 +120,7 @@ class DetailsPage extends StatelessWidget {
                   child: Text(
                     media.type == MediaType.tv ? media.genres?.map((genre){
                       return genre.name;
-                    })?.toList()?.join(', ') ?? "Genre":
+                    }).toList().join(', ') ?? "Genre":
                     "${media.runtime}Min",
                     textAlign: TextAlign.center,
                     softWrap: true,

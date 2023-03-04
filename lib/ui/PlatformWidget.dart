@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 abstract class PlatformWidget<C extends Widget, M extends Widget> extends StatelessWidget{
-  PlatformWidget({Key key}) : super(key: key);
+  PlatformWidget({Key? key}) : super(key: key);
 
-  C buildCupertinoWidget(BuildContext context);
-  M buildMaterialWidget(BuildContext context);
+  PreferredSizeWidget buildCupertinoWidget(BuildContext context);
+  PreferredSizeWidget buildMaterialWidget(BuildContext context);
 
   @override
-  Widget build(BuildContext context) {
+  PreferredSizeWidget build(BuildContext context) {
     if(Platform.isIOS){
       return buildCupertinoWidget(context);
     }
