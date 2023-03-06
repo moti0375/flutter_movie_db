@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter_movie_db/application.dart';
 import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/model/media_category.dart';
 import 'package:flutter_movie_db/data/model/media_models.dart';
@@ -12,20 +11,14 @@ import 'package:flutter_movie_db/network/retrofit_base_service.dart';
 
 class TmdbRepository implements Repository {
   static const String IMAGES_BASE_URL = "https://image.tmdb.org/t/p/w500/";
-  BaseRetrofitClient client;
+  BaseRetrofitClient _client;
 
-  TmdbRepository({required this.client});
-
-  // @override
-  // Future<DetailsResponse> getMovieDetails(String id) async {
-  //   print("tmdb service: getMovieDetails: $id");
-  //   return client.getMovieDetails(id);
-  // }
+   TmdbRepository(this._client);
 
   @override
   Future<List<Media>> getTopRatedMovies() async {
     print("MvdbService: getMovies");
-    dynamic response = await client.getTopRatedMovies(API_KEY);
+    dynamic response = await _client.getTopRatedMovies();
 
     MovieApiResponse apiResponse = MovieApiResponse.fromJson(response);
     print("response: ${apiResponse.toString()}");
@@ -49,7 +42,7 @@ class TmdbRepository implements Repository {
 Future<List<Media>> getNowPlaying() async {
   print("getNowPlaying: called ");
   dynamic queryResult =
-  await client.getNowPlaying(API_KEY).catchError((error) {
+  await _client.getNowPlaying().catchError((error) {
     print("Something went wrong: ${error.toString()}");
   });
 
@@ -79,7 +72,7 @@ Future<List<Media>> getNowPlaying() async {
 Future<List<Media>> getPopularMovies() async {
   print("getPopularMovies: called ");
   dynamic queryResult =
-  await client.getPopularMovies(API_KEY).catchError((error) {
+  await _client.getPopularMovies().catchError((error) {
     print("Error: ${error.toString()}");
   });
 
@@ -104,7 +97,7 @@ Future<List<Media>> getPopularMovies() async {
 @override
 Future<List<Media>> getTopRatedTv() async {
   print("getTopRatedTv: called ");
-  dynamic queryResult = await client.getTopRatedTv(API_KEY);
+  dynamic queryResult = await _client.getTopRatedTv();
   print("getTopRatedTv: queryResult: $queryResult ");
 
   TvApiResponse apiResponse = TvApiResponse.fromJson(queryResult);
@@ -128,8 +121,8 @@ Future<List<Media>> getTopRatedTv() async {
 Future<Media> getMediaDetails(MediaType type, String id) async {
   print("getMediaDetails: type $type, id: $id");
 
-  dynamic queryResponse = await client
-      .getMediaDetails(API_KEY, type.toString().split(".").last, id)
+  dynamic queryResponse = await _client
+      .getMediaDetails(type.toString().split(".").last, id)
       .catchError((error) {
     print("getMediaDetails: ${error.toString()}");
   });

@@ -2,6 +2,7 @@ import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/model/media_category.dart';
 import 'package:flutter_movie_db/data/model/media_models.dart';
 
+const String API_KEY = "b331218ddcbd128634135abf7673fab5";
 
 abstract class Repository {
   Future<List<Media>> getTopRatedMovies();
