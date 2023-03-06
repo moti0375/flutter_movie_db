@@ -7,7 +7,7 @@ import 'package:flutter_movie_db/data/model/media_models.dart';
 import 'package:flutter_movie_db/data/model/movie_api_response/movie_api_response.dart';
 import 'package:flutter_movie_db/data/model/tv_api_response/tv_api_response.dart';
 import 'package:flutter_movie_db/data/repository/base_service.dart';
-import 'package:flutter_movie_db/network/response/details_response.dart';
+import 'package:flutter_movie_db/data/model/details_response/details_response.dart';
 import 'package:flutter_movie_db/network/retrofit_base_service.dart';
 
 class TmdbRepository implements Repository {
@@ -144,12 +144,12 @@ Future<Media> getMediaDetails(MediaType type, String id) async {
           id: response.id,
           title: response.title,
           overview: response.overview,
-          release_date: response.release_date,
+          release_date: response.releaseDate,
           runtime: response.runtime,
-          poster_path: response.poster_path,
-          backdrop_path: response.backdrop_path,
-          vote_average: response.vote_average,
-          vote_count: response.vote_count,
+          poster_path: response.posterPath,
+          backdrop_path: response.backdropPath,
+          vote_average: response.voteAverage,
+          vote_count: response.voteCount,
           genres: response.genres,
           type: type);
       return media;
@@ -158,12 +158,12 @@ Future<Media> getMediaDetails(MediaType type, String id) async {
           id: response.id,
           title: response.name,
           overview: response.overview,
-          release_date: response.first_air_date,
+          release_date: response.firstAirDate,
           runtime: 0,
-          poster_path: response.poster_path,
-          backdrop_path: response.backdrop_path,
+          poster_path: response.posterPath,
+          backdrop_path: response.backdropPath,
           vote_average: response.popularity,
-          vote_count: response.vote_count,
+          vote_count: response.voteCount,
           genres: response.genres,
           type: type);
       return media;

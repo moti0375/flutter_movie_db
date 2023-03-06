@@ -1,6 +1,4 @@
-import 'dart:async';
-
-import 'package:flutter_movie_db/network/response/details_response.dart';
+import 'package:flutter_movie_db/data/model/details_response/details_response.dart';
 class AppApi  {
 
   //final String apiKey;
