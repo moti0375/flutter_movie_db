@@ -1,35 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_movie_db/bloc_cubit/base_state/base_bloc_state.dart';
 import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/repository/base_service.dart';
 import 'package:flutter_movie_db/data/repository/tmdb_repository.dart';
+import 'package:flutter_movie_db/pages/details_page/details_page_cubit.dart';
+import 'package:flutter_movie_db/pages/details_page/details_page_state/details_page_state.dart';
 import 'package:flutter_movie_db/ui/PlatformAppBar.dart';
 import 'package:flutter_movie_db/ui/rating_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class DetailsPage extends StatelessWidget {
-  DetailsPage({required this.media});
+class DetailsPage extends StatefulWidget {
+  DetailsPage({required this.media, required this.cubit});
 
   final Media media;
+  final DetailsPageCubit cubit;
+
+  @override
+  State<DetailsPage> createState() => _DetailsPageState();
+
+  static Widget create({required Media media}) {
+    return Consumer<Repository>(
+      builder: (_, baseRepository, __) => BlocProvider<DetailsPageCubit>(
+        create: (_) => DetailsPageCubit(baseRepository, media),
+        child: Consumer<DetailsPageCubit>(
+          builder: (_, bloc, __) => DetailsPage(
+            cubit: bloc,
+            media: media,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DetailsPageState extends State<DetailsPage> {
   final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
 
   @override
+  void initState() {
+    super.initState();
+    widget.cubit.loadDetails();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    print("build: $media");
+    print("build: ${widget.media}");
     return Scaffold(
       backgroundColor: Colors.grey[400],
       appBar: PlatformAppBar(
-        title: Text(media.title),
+        title: Text(widget.media.title),
       ).build(context),
-      body: FutureBuilder<Media>(
-        future: Provider.of<Repository>(context).getMediaDetails(media.type, media.id.toString()),
-        builder: (context, snapshot) {
-          if(snapshot.hasData){
-            return _buildContent(snapshot.requireData, context);
-          } else {
-            return Container();
-          }
+      body: BlocBuilder<DetailsPageCubit, BaseBlocState<DetailsPageState>>(
+        builder: (context, state) {
+          return state.map(
+              init: (_) => SizedBox(),
+              loading: (_) => _loadingWidget(),
+              next: (pageState) => _showDetailsPage(pageState.data, context),
+              error: (state) => _handleError(state.error));
         },
       ),
     );
@@ -52,6 +82,9 @@ class DetailsPage extends StatelessWidget {
     }
   }
 
+  Widget _showDetailsPage(DetailsPageState data, BuildContext context) {
+    return data.map(detailsLoaded: (detailsLoaded) => _buildContent(detailsLoaded.details, context));
+  }
 
   Widget _buildContent(Media media, BuildContext context) {
     print("_buildContent: ${media.type}");
@@ -68,14 +101,8 @@ class DetailsPage extends StatelessWidget {
                 child: getImageOrPlaceHolder(media),
               ),
             ),
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
-            height: MediaQuery
-                .of(context)
-                .size
-                .width * 9 / 16,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.width * 9 / 16,
           ),
           SizedBox(
             height: 16,
@@ -105,7 +132,7 @@ class DetailsPage extends StatelessWidget {
                 Expanded(
                   flex: 1,
                   child: Text(
-                      media.release_date != null ? "${dateFormat.parse(media.release_date!).year}" : "",
+                    media.release_date != null ? "${dateFormat.parse(media.release_date!).year}" : "",
                     textAlign: TextAlign.center,
                     softWrap: true,
                     style: TextStyle(
@@ -118,10 +145,15 @@ class DetailsPage extends StatelessWidget {
                 Expanded(
                   flex: 1,
                   child: Text(
-                    media.type == MediaType.tv ? media.genres?.map((genre){
-                      return genre.name;
-                    }).toList().join(', ') ?? "Genre":
-                    "${media.runtime}Min",
+                    media.type == MediaType.tv
+                        ? media.genres
+                                ?.map((genre) {
+                                  return genre.name;
+                                })
+                                .toList()
+                                .join(', ') ??
+                            "Genre"
+                        : "${media.runtime}Min",
                     textAlign: TextAlign.center,
                     softWrap: true,
                     style: TextStyle(
@@ -174,4 +206,14 @@ class DetailsPage extends StatelessWidget {
       ),
     );
   }
+
+  Widget _handleError(Error error) {
+    return Container(
+      child: Center(
+        child: Text("Something went wrong: ${error.stackTrace}"),
+      ),
+    );
+  }
+
+
 }

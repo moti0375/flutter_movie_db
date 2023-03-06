@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _navigateToDetailsPage(Media media) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => DetailsPage(media: media,)));
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => DetailsPage.create(media: media)));
   }
 
   void _navigateToMorePage(MediaCategory category) {
