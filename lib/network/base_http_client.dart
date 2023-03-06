@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter_movie_db/network/response/api_response.dart';
 import 'package:flutter_movie_db/network/response/details_response.dart';
 class AppApi  {
 

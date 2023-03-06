@@ -4,8 +4,9 @@ import 'package:flutter_movie_db/application.dart';
 import 'package:flutter_movie_db/data/model/media.dart';
 import 'package:flutter_movie_db/data/model/media_category.dart';
 import 'package:flutter_movie_db/data/model/media_models.dart';
+import 'package:flutter_movie_db/data/model/movie_api_response/movie_api_response.dart';
+import 'package:flutter_movie_db/data/model/tv_api_response/tv_api_response.dart';
 import 'package:flutter_movie_db/data/repository/base_service.dart';
-import 'package:flutter_movie_db/network/response/api_response.dart';
 import 'package:flutter_movie_db/network/response/details_response.dart';
 import 'package:flutter_movie_db/network/retrofit_base_service.dart';
 
@@ -26,19 +27,19 @@ class TmdbRepository implements Repository {
     print("MvdbService: getMovies");
     dynamic response = await client.getTopRatedMovies(API_KEY);
 
-    ApiResponse apiResponse = ApiResponse.fromJson(response);
+    MovieApiResponse apiResponse = MovieApiResponse.fromJson(response);
     print("response: ${apiResponse.toString()}");
 
     return apiResponse.results
         .map((movie) => Media(
             id: movie.id,
             title: movie.title,
-            vote_count: movie.vote_count,
+            vote_count: movie.voteCount,
             overview: movie.overview,
-            poster_path: movie.poster_path,
-            vote_average: movie.vote_average,
-            backdrop_path: movie.backdrop_path,
-            release_date: movie.release_date,
+            poster_path: movie.posterPath,
+            vote_average: movie.voteAverage,
+            backdrop_path: movie.backdropPath,
+            release_date: movie.releaseDate,
             genres: movie.genres,
             type: MediaType.movie))
         .toList();
@@ -52,19 +53,19 @@ Future<List<Media>> getNowPlaying() async {
     print("Something went wrong: ${error.toString()}");
   });
 
-  ApiResponse apiResponse = ApiResponse.fromJson(queryResult);
+  MovieApiResponse apiResponse = MovieApiResponse.fromJson(queryResult);
 
   print("getNowPlaying: done $apiResponse");
   return apiResponse.results.map((movie) {
     return Media(
         id: movie.id,
         title: movie.title,
-        vote_count: movie.vote_count,
+        vote_count: movie.voteCount,
         overview: movie.overview,
-        poster_path: movie.poster_path,
-        vote_average: movie.vote_average,
-        backdrop_path: movie.backdrop_path,
-        release_date: movie.release_date,
+        poster_path: movie.posterPath,
+        vote_average: movie.voteAverage,
+        backdrop_path: movie.backdropPath,
+        release_date: movie.releaseDate,
         genres: movie.genres,
         type: MediaType.movie);
   }).toList();
@@ -83,18 +84,18 @@ Future<List<Media>> getPopularMovies() async {
   });
 
   print("getPopularMovies: done ");
-  ApiResponse apiResponse = ApiResponse.fromJson(queryResult);
+  MovieApiResponse apiResponse = MovieApiResponse.fromJson(queryResult);
 
   return apiResponse.results.map((movie) {
     return Media(
         id: movie.id,
         title: movie.title,
-        vote_count: movie.vote_count,
+        vote_count: movie.voteCount,
         overview: movie.overview,
-        poster_path: movie.poster_path,
-        vote_average: movie.vote_average,
-        backdrop_path: movie.backdrop_path,
-        release_date: movie.release_date,
+        poster_path: movie.posterPath,
+        vote_average: movie.voteAverage,
+        backdrop_path: movie.backdropPath,
+        release_date: movie.releaseDate,
         genres: movie.genres,
         type: MediaType.movie);
   }).toList();
@@ -104,20 +105,22 @@ Future<List<Media>> getPopularMovies() async {
 Future<List<Media>> getTopRatedTv() async {
   print("getTopRatedTv: called ");
   dynamic queryResult = await client.getTopRatedTv(API_KEY);
-  ApiResponse apiResponse = ApiResponse.fromJson(queryResult);
+  print("getTopRatedTv: queryResult: $queryResult ");
+
+  TvApiResponse apiResponse = TvApiResponse.fromJson(queryResult);
 
   return apiResponse.results.map((tv) {
     return Media(
         id: tv.id,
-        title: tv.name ?? "",
-        vote_count: tv.vote_count,
+        title: tv.name,
+        vote_count: tv.voteCount,
         overview: tv.overview,
-        poster_path: tv.poster_path,
-        vote_average: tv.vote_average,
-        backdrop_path: tv.backdrop_path,
-        release_date: tv.first_air_date,
+        poster_path: tv.posterPath,
+        vote_average: tv.voteAverage,
+        backdrop_path: tv.backdropPath,
+        release_date: tv.firstAirDate,
         type: MediaType.tv,
-        genres: tv.genres);
+        genres: List.empty());
   }).toList();
 }
 

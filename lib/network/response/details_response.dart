@@ -1,4 +1,4 @@
-import 'package:flutter_movie_db/data/model/genre.dart';
+import 'package:flutter_movie_db/data/model/genre/genre.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'details_response.g.dart';

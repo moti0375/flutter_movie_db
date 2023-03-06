@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter_movie_db/data/model/genre.dart';
+import 'package:flutter_movie_db/data/model/genre/genre.dart';
 
 enum MediaType { movie, tv }
 
