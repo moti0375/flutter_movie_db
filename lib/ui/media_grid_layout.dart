@@ -29,50 +29,53 @@ class MediaGridLayout extends StatelessWidget {
         childAspectRatio: (itemHeight/itemWidth),
         controller: new ScrollController(keepScrollOffset: true),
         children: List.generate(items.length, (index) {
-          return Container(
-            margin: EdgeInsets.all(4),
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                            offset: Offset(0.0, 4.0),
-                            color: Colors.black26,
-                            blurRadius: 5.0
-                        )
-                      ]
-                  ),
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  child: Hero(
-                    tag: items[index].id,
-                    child: FadeInImage.memoryNetwork(
-                      placeholder: kTransparentImage,
-                      image: TmdbRepository.buildImageUrl(items[index].poster_path),
-                      fit: BoxFit.fill,
+          return InkWell(
+            onTap: () => onItemClick(items[index]),
+            child: Container(
+              margin: EdgeInsets.all(4),
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                              offset: Offset(0.0, 4.0),
+                              color: Colors.black26,
+                              blurRadius: 5.0
+                          )
+                        ]
                     ),
                   ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      gradient: LinearGradient(colors: [Colors.transparent, Colors.black87], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-                ),
-                Container(
-                  alignment: Alignment.bottomLeft,
-                  padding: EdgeInsets.only(bottom: 5, left: 5),
-                  child: Text(
-                    items[index].title,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white60,
+                  ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    child: Hero(
+                      tag: items[index].id,
+                      child: FadeInImage.memoryNetwork(
+                        placeholder: kTransparentImage,
+                        image: TmdbRepository.buildImageUrl(items[index].poster_path),
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ),
-                )
-              ],
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        gradient: LinearGradient(colors: [Colors.transparent, Colors.black87], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+                  ),
+                  Container(
+                    alignment: Alignment.bottomLeft,
+                    padding: EdgeInsets.only(bottom: 5, left: 5),
+                    child: Text(
+                      items[index].title,
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white60,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           );
         }),
