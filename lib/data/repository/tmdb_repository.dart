@@ -133,10 +133,11 @@ Future<Media> getMediaDetails(MediaType type, String id) async {
       .catchError((error) {
     print("getMediaDetails: ${error.toString()}");
   });
+  print("getMediaDetails: queryResponse $queryResponse");
 
   DetailsResponse response = DetailsResponse.fromJson(queryResponse);
 
-  print("getMediaDetails: ${response.toString()}");
+  print("getMediaDetails:  DetailsResponse: ${response.toString()}");
 
   switch (type) {
     case MediaType.movie:
