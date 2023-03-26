@@ -7,6 +7,7 @@ import 'package:flutter_movie_db/data/repository/base_service.dart';
 import 'package:flutter_movie_db/pages/home_page/bloc.dart';
 import 'package:flutter_movie_db/pages/more_page/more_page.dart';
 import 'package:flutter_movie_db/ui/PlatformAppBar.dart';
+import 'package:flutter_movie_db/ui/home_page_banner.dart';
 import 'package:flutter_movie_db/ui/media_carousel.dart';
 import 'package:provider/provider.dart';
 
@@ -135,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                 init: () => SizedBox.shrink(),
                 loading: () => Container(child: CircularProgressIndicator(),),
                 next: (pageState) => pageState.whenOrNull(
-                    nowPlayingLoaded: (models) => MediaCarousel(models: models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.NowPlaying),)) ?? SizedBox.shrink(),
+                    nowPlayingLoaded: (models) => HomePageBanner(models: models, onClickListener: onClick, onMoreClickListener: () => onMoreClickListener(MediaCategory.NowPlaying),)) ?? SizedBox.shrink(),
                 error: (e) => SizedBox()));
   }
 
